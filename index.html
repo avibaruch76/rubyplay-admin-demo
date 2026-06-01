@@ -423,10 +423,10 @@
           <div class="card">
             <div class="card-h"><h3>Upcoming releases</h3><span class="link" onclick="switchView('releases')">See calendar →</span></div>
             <div>
-              <div class="activity-row" onclick="switchView('editor')"><div class="game-thumb" style="background:linear-gradient(135deg,#ef4444,#7c2d12);"></div><div class="meta"><div class="activity-title">Diamond Explosion 777 96</div><div class="activity-detail">Ruby Play · 5×3 · 96.37% RTP · 8000x · rp_200</div></div><div class="activity-time">Jun 04, 2026</div><span class="pill pill-sched" style="margin-left:8px;">Scheduled</span></div>
-              <div class="activity-row" onclick="switchView('editor')"><div class="game-thumb" style="background:linear-gradient(135deg,#f59e0b,#78350f);"></div><div class="meta"><div class="activity-title">Mad Hit Diamonds Deluxe 96</div><div class="activity-detail">Ruby Play · 3×3×3 · 96.35% RTP · 3799x · rp_211</div></div><div class="activity-time">Jun 11, 2026</div><span class="pill pill-sched" style="margin-left:8px;">Scheduled</span></div>
-              <div class="activity-row" onclick="switchView('editor')"><div class="game-thumb" style="background:linear-gradient(135deg,#dc2626,#7c2d12);"></div><div class="meta"><div class="activity-title">Bufón Fortuna Deluxe 96</div><div class="activity-detail">Ruby Play · J Mania® S07 · 96.33% RTP · 3000x · rp_216</div></div><div class="activity-time">Jun 18, 2026</div><span class="pill pill-sched" style="margin-left:8px;">Scheduled</span></div>
-              <div class="activity-row" onclick="switchView('editor')"><div class="game-thumb" style="background:linear-gradient(135deg,#7c3aed,#1e1b4b);"></div><div class="meta"><div class="activity-title">Voltage Blitz King Ra 96</div><div class="activity-detail">Koala Games · Voltage Blitz® S03 · 96.33% RTP · 6000x · kg_5045</div></div><div class="activity-time">Jun 25, 2026</div><span class="pill pill-sched" style="margin-left:8px;">Scheduled</span></div>
+              <div class="activity-row" onclick="openGame('rp_200')"><div class="game-thumb" style="background:linear-gradient(135deg,#ef4444,#7c2d12);"></div><div class="meta"><div class="activity-title">Diamond Explosion 777 96</div><div class="activity-detail">Ruby Play · 5×3 · 96.37% RTP · 8000x · rp_200</div></div><div class="activity-time">Jun 04, 2026</div><span class="pill pill-sched" style="margin-left:8px;">Scheduled</span></div>
+              <div class="activity-row" onclick="openGame('rp_211')"><div class="game-thumb" style="background:linear-gradient(135deg,#f59e0b,#78350f);"></div><div class="meta"><div class="activity-title">Mad Hit Diamonds Deluxe 96</div><div class="activity-detail">Ruby Play · 3×3×3 · 96.35% RTP · 3799x · rp_211</div></div><div class="activity-time">Jun 11, 2026</div><span class="pill pill-sched" style="margin-left:8px;">Scheduled</span></div>
+              <div class="activity-row" onclick="openGame('rp_216')"><div class="game-thumb" style="background:linear-gradient(135deg,#dc2626,#7c2d12);"></div><div class="meta"><div class="activity-title">Bufón Fortuna Deluxe 96</div><div class="activity-detail">Ruby Play · J Mania® S07 · 96.33% RTP · 3000x · rp_216</div></div><div class="activity-time">Jun 18, 2026</div><span class="pill pill-sched" style="margin-left:8px;">Scheduled</span></div>
+              <div class="activity-row" onclick="openGame('kg_5045')"><div class="game-thumb" style="background:linear-gradient(135deg,#7c3aed,#1e1b4b);"></div><div class="meta"><div class="activity-title">Voltage Blitz King Ra 96</div><div class="activity-detail">Koala Games · Voltage Blitz® S03 · 96.33% RTP · 6000x · kg_5045</div></div><div class="activity-time">Jun 25, 2026</div><span class="pill pill-sched" style="margin-left:8px;">Scheduled</span></div>
             </div>
           </div>
           <div class="card">
@@ -464,16 +464,16 @@
         <table class="table">
           <thead><tr><th>Game</th><th>Studio</th><th>Series</th><th>Status</th><th>Release</th><th>RTP / Vol</th><th>Last edit</th><th></th></tr></thead>
           <tbody id="gamesTableBody">
-            <tr class="clickable game-row" data-studio="Ruby Play" data-status="Scheduled" data-mechanic="Respin" data-theme="Classical Slot" data-volatility="5" data-tag="Upcoming" data-series="J Mania®" onclick="switchView('editor')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#dc2626,#7c2d12);"></div><span class="game-name">Bufón Fortuna Deluxe 96</span></div></td><td><span class="studio-tag"><span class="studio-mark">▶</span>Ruby Play</span></td><td>J Mania® (S07)</td><td><span class="pill pill-sched">Scheduled</span></td><td>Jun 18, 2026</td><td>96.33% · Vol 5</td><td>2h ago · avi</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
-            <tr class="clickable game-row" data-studio="Ruby Play" data-status="Scheduled" data-mechanic="Free Spins" data-theme="Classic / Diamonds" data-volatility="4" data-tag="Upcoming" data-series="Diamond Explosion®" onclick="switchView('editor')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#ef4444,#7c2d12);"></div><span class="game-name">Diamond Explosion 777 96</span></div></td><td><span class="studio-tag"><span class="studio-mark">▶</span>Ruby Play</span></td><td>Diamond Explosion® (S02)</td><td><span class="pill pill-sched">Scheduled</span></td><td>Jun 04, 2026</td><td>96.37% · Vol 4</td><td>1h ago · avi</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
-            <tr class="clickable game-row" data-studio="Ruby Play" data-status="Scheduled" data-mechanic="Respin" data-theme="Gems" data-volatility="4" data-tag="Upcoming" data-series="Mad Hit®" onclick="switchView('editor')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#f59e0b,#78350f);"></div><span class="game-name">Mad Hit Diamonds Deluxe 96</span></div></td><td><span class="studio-tag"><span class="studio-mark">▶</span>Ruby Play</span></td><td>Mad Hit® (S08)</td><td><span class="pill pill-sched">Scheduled</span></td><td>Jun 11, 2026</td><td>96.35% · Vol 4</td><td>4h ago · avi</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
-            <tr class="clickable game-row" data-studio="Koala Games" data-status="In review" data-mechanic="Free Spins" data-theme="Egypt / Ra" data-volatility="4" data-tag="Upcoming" data-series="Voltage Blitz®" onclick="switchView('editor')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#7c3aed,#1e1b4b);"></div><span class="game-name">Voltage Blitz King Ra 96</span></div></td><td><span class="studio-tag"><span class="studio-mark" style="background:#7c3aed;">◐</span>Koala Games</span></td><td>Voltage Blitz® (S03)</td><td><span class="pill pill-review">In review</span></td><td>Jun 25, 2026</td><td>96.33% · Vol 4</td><td>3h ago · maya</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
-            <tr class="clickable game-row" data-studio="Koala Games" data-status="Scheduled" data-mechanic="Free Spins" data-theme="Asian / Jiu Jitsu" data-volatility="4" data-tag="Upcoming" data-series="Voltage Blitz®" onclick="switchView('editor')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#0ea5e9,#0c4a6e);"></div><span class="game-name">Coelho Jitsu 96</span></div></td><td><span class="studio-tag"><span class="studio-mark" style="background:#7c3aed;">◐</span>Koala Games</span></td><td>Voltage Blitz® (S03)</td><td><span class="pill pill-sched">Scheduled</span></td><td>Jun 25, 2026</td><td>96.33% · Vol 4</td><td>6h ago · maya</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
-            <tr class="clickable game-row" data-studio="Mad Hat" data-status="In review" data-mechanic="Buy Feature" data-theme="Sports / Football" data-volatility="1" data-tag="Upcoming" data-series="Goalinko" onclick="switchView('editor')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#16a34a,#052e16);"></div><span class="game-name">BetWarrior Goalinko 96</span></div></td><td><span class="studio-tag"><span class="studio-mark" style="background:#0f172a;">🎩</span>Mad Hat</span></td><td>—</td><td><span class="pill pill-review">In review</span></td><td>Jun 04, 2026</td><td>96.36% · Vol 1</td><td>4h ago · tom</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
-            <tr class="clickable game-row" data-studio="Ruby Play" data-status="Scheduled" data-mechanic="Free Spins" data-theme="South African / Luxury" data-volatility="3" data-tag="Upcoming" data-series="Rush Fever®" onclick="switchView('editor')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#be185d,#500724);"></div><span class="game-name">Jozi Gold: Soft Life Deluxe 96</span></div></td><td><span class="studio-tag"><span class="studio-mark">▶</span>Ruby Play</span></td><td>Rush Fever® (S01)</td><td><span class="pill pill-sched">Scheduled</span></td><td>Jun 04, 2026</td><td>96.37% · Vol 3</td><td>1d ago · avi</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
-            <tr class="clickable game-row" data-studio="Spincraft" data-status="Draft" data-mechanic="Buy Feature" data-theme="Monarch / Jester" data-volatility="5" data-tag="Upcoming" data-series="Crown Jester" onclick="switchView('editor')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#f59e0b,#b91c1c);"></div><span class="game-name">Sweet Crowns</span></div></td><td><span class="studio-tag"><span class="studio-mark" style="background:#16a34a;">♛</span>Spincraft</span></td><td>—</td><td><span class="pill pill-draft">Draft</span></td><td>TBD</td><td>94.53% · Vol 5</td><td>5h ago · daniel</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
-            <tr class="clickable game-row" data-studio="Ruby Play" data-status="Live" data-mechanic="Free Spins" data-theme="Sports / Football" data-volatility="5" data-tag="Live" data-series="J Mania®" onclick="switchView('editor')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#fbbf24,#0f172a);"></div><span class="game-name">J Mania Goal Nations 96</span></div></td><td><span class="studio-tag"><span class="studio-mark">▶</span>Ruby Play</span></td><td>J Mania® (S07)</td><td><span class="pill pill-live">Live</span></td><td>May 28, 2026</td><td>96.36% · Vol 5</td><td>1w ago · avi</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
-            <tr class="clickable game-row" data-studio="Koala Games" data-status="Live" data-mechanic="Hold & Win" data-theme="Volcano" data-volatility="5" data-tag="Live" data-series="Voltage Blitz®" onclick="switchView('editor')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#7c3aed,#0c4a6e);"></div><span class="game-name">Voltage Blitz Heat Rush 96</span></div></td><td><span class="studio-tag"><span class="studio-mark" style="background:#7c3aed;">◐</span>Koala Games</span></td><td>Voltage Blitz® (S02)</td><td><span class="pill pill-live">Live</span></td><td>May 21, 2026</td><td>96.31% · Vol 5</td><td>1w ago · maya</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
+            <tr class="clickable game-row" data-studio="Ruby Play" data-status="Scheduled" data-mechanic="Respin" data-theme="Classical Slot" data-volatility="5" data-tag="Upcoming" data-series="J Mania®" onclick="openGame('rp_216')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#dc2626,#7c2d12);"></div><span class="game-name">Bufón Fortuna Deluxe 96</span></div></td><td><span class="studio-tag"><span class="studio-mark">▶</span>Ruby Play</span></td><td>J Mania® (S07)</td><td><span class="pill pill-sched">Scheduled</span></td><td>Jun 18, 2026</td><td>96.33% · Vol 5</td><td>2h ago · avi</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
+            <tr class="clickable game-row" data-studio="Ruby Play" data-status="Scheduled" data-mechanic="Free Spins" data-theme="Classic / Diamonds" data-volatility="4" data-tag="Upcoming" data-series="Diamond Explosion®" onclick="openGame('rp_200')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#ef4444,#7c2d12);"></div><span class="game-name">Diamond Explosion 777 96</span></div></td><td><span class="studio-tag"><span class="studio-mark">▶</span>Ruby Play</span></td><td>Diamond Explosion® (S02)</td><td><span class="pill pill-sched">Scheduled</span></td><td>Jun 04, 2026</td><td>96.37% · Vol 4</td><td>1h ago · avi</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
+            <tr class="clickable game-row" data-studio="Ruby Play" data-status="Scheduled" data-mechanic="Respin" data-theme="Gems" data-volatility="4" data-tag="Upcoming" data-series="Mad Hit®" onclick="openGame('rp_211')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#f59e0b,#78350f);"></div><span class="game-name">Mad Hit Diamonds Deluxe 96</span></div></td><td><span class="studio-tag"><span class="studio-mark">▶</span>Ruby Play</span></td><td>Mad Hit® (S08)</td><td><span class="pill pill-sched">Scheduled</span></td><td>Jun 11, 2026</td><td>96.35% · Vol 4</td><td>4h ago · avi</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
+            <tr class="clickable game-row" data-studio="Koala Games" data-status="In review" data-mechanic="Free Spins" data-theme="Egypt / Ra" data-volatility="4" data-tag="Upcoming" data-series="Voltage Blitz®" onclick="openGame('kg_5045')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#7c3aed,#1e1b4b);"></div><span class="game-name">Voltage Blitz King Ra 96</span></div></td><td><span class="studio-tag"><span class="studio-mark" style="background:#7c3aed;">◐</span>Koala Games</span></td><td>Voltage Blitz® (S03)</td><td><span class="pill pill-review">In review</span></td><td>Jun 25, 2026</td><td>96.33% · Vol 4</td><td>3h ago · maya</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
+            <tr class="clickable game-row" data-studio="Koala Games" data-status="Scheduled" data-mechanic="Free Spins" data-theme="Asian / Jiu Jitsu" data-volatility="4" data-tag="Upcoming" data-series="Voltage Blitz®" onclick="openGame('kg_5055')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#0ea5e9,#0c4a6e);"></div><span class="game-name">Coelho Jitsu 96</span></div></td><td><span class="studio-tag"><span class="studio-mark" style="background:#7c3aed;">◐</span>Koala Games</span></td><td>Voltage Blitz® (S03)</td><td><span class="pill pill-sched">Scheduled</span></td><td>Jun 25, 2026</td><td>96.33% · Vol 4</td><td>6h ago · maya</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
+            <tr class="clickable game-row" data-studio="Mad Hat" data-status="In review" data-mechanic="Buy Feature" data-theme="Sports / Football" data-volatility="1" data-tag="Upcoming" data-series="Goalinko" onclick="openGame('mh_10007')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#16a34a,#052e16);"></div><span class="game-name">BetWarrior Goalinko 96</span></div></td><td><span class="studio-tag"><span class="studio-mark" style="background:#0f172a;">🎩</span>Mad Hat</span></td><td>—</td><td><span class="pill pill-review">In review</span></td><td>Jun 04, 2026</td><td>96.36% · Vol 1</td><td>4h ago · tom</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
+            <tr class="clickable game-row" data-studio="Ruby Play" data-status="Scheduled" data-mechanic="Free Spins" data-theme="South African / Luxury" data-volatility="3" data-tag="Upcoming" data-series="Rush Fever®" onclick="openGame('rp_242')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#be185d,#500724);"></div><span class="game-name">Jozi Gold: Soft Life Deluxe 96</span></div></td><td><span class="studio-tag"><span class="studio-mark">▶</span>Ruby Play</span></td><td>Rush Fever® (S01)</td><td><span class="pill pill-sched">Scheduled</span></td><td>Jun 04, 2026</td><td>96.37% · Vol 3</td><td>1d ago · avi</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
+            <tr class="clickable game-row" data-studio="Spincraft" data-status="Draft" data-mechanic="Buy Feature" data-theme="Monarch / Jester" data-volatility="5" data-tag="Upcoming" data-series="Crown Jester" onclick="openGame('sc_15002')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#f59e0b,#b91c1c);"></div><span class="game-name">Sweet Crowns</span></div></td><td><span class="studio-tag"><span class="studio-mark" style="background:#16a34a;">♛</span>Spincraft</span></td><td>—</td><td><span class="pill pill-draft">Draft</span></td><td>TBD</td><td>94.53% · Vol 5</td><td>5h ago · daniel</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
+            <tr class="clickable game-row" data-studio="Ruby Play" data-status="Live" data-mechanic="Free Spins" data-theme="Sports / Football" data-volatility="5" data-tag="Live" data-series="J Mania®" onclick="openGame('rp_228')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#fbbf24,#0f172a);"></div><span class="game-name">J Mania Goal Nations 96</span></div></td><td><span class="studio-tag"><span class="studio-mark">▶</span>Ruby Play</span></td><td>J Mania® (S07)</td><td><span class="pill pill-live">Live</span></td><td>May 28, 2026</td><td>96.36% · Vol 5</td><td>1w ago · avi</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
+            <tr class="clickable game-row" data-studio="Koala Games" data-status="Live" data-mechanic="Hold & Win" data-theme="Volcano" data-volatility="5" data-tag="Live" data-series="Voltage Blitz®" onclick="openGame('kg_5551')"><td><div class="game-cell"><div class="game-thumb" style="background:linear-gradient(135deg,#7c3aed,#0c4a6e);"></div><span class="game-name">Voltage Blitz Heat Rush 96</span></div></td><td><span class="studio-tag"><span class="studio-mark" style="background:#7c3aed;">◐</span>Koala Games</span></td><td>Voltage Blitz® (S02)</td><td><span class="pill pill-live">Live</span></td><td>May 21, 2026</td><td>96.31% · Vol 5</td><td>1w ago · maya</td><td onclick="event.stopPropagation(); openRowMenu(event)">⋯</td></tr>
           </tbody>
         </table>
         <div id="gameCount" style="text-align:center; padding:20px; color:var(--slate-500); font-size:12px;">Showing <b>10 of 756</b> games · <span style="font-size:11px; color:var(--slate-400);">(demo loads a sample; production paginates the full catalog)</span> · <span style="color:var(--red); cursor:pointer; font-weight:600;" onclick="toast('Loaded next 50 games','info')">Load more</span></div>
@@ -770,8 +770,8 @@
         <div class="editor-header">
           <div class="editor-title-row">
             <div>
-              <div class="editor-title">Bufón Fortuna Deluxe 96 <span class="pill pill-sched">Scheduled</span><span class="pill pill-tag">Upcoming</span></div>
-              <div class="editor-meta">Ruby Play · J Mania® S07 · Game ID: rp_216 · Scheduled for Jun 18, 2026 · last edited 2h ago by avi@</div>
+              <div class="editor-title"><span id="ed-title">Bufón Fortuna Deluxe 96</span> <span id="ed-status-pill" class="pill pill-sched">Scheduled</span><span id="ed-tag-pill" class="pill pill-tag">Upcoming</span></div>
+              <div class="editor-meta" id="ed-meta">Ruby Play · J Mania® S07 · Game ID: rp_216 · Scheduled for Jun 18, 2026 · last edited 2h ago by avi@</div>
             </div>
             <div class="editor-actions">
               <button class="btn btn-ghost" onclick="openModal('preview')">↗ Preview on site</button>
@@ -799,31 +799,31 @@
           <div class="tab-pane active" data-pane="identity">
             <div class="form-section-h"><span class="num">1</span>Basic identity</div>
             <div class="form-row form-row-2">
-              <div><label class="field-label">Title <span class="req">*</span></label><input class="field-input" value="Bufón Fortuna Deluxe 96"><div class="field-hint">Add ® after the series name for trademarked series.</div></div>
-              <div><label class="field-label">Studio <span class="req">*</span></label><select class="field-select"><option>Ruby Play</option><option>Koala Games</option><option>Mad Hat</option><option>Spincraft</option><option>Firerose</option><option>X Slots</option></select></div>
+              <div><label class="field-label">Title <span class="req">*</span></label><input id="ed-name" class="field-input" value="Bufón Fortuna Deluxe 96"><div class="field-hint">Add ® after the series name for trademarked series.</div></div>
+              <div><label class="field-label">Studio <span class="req">*</span></label><select id="ed-studio" class="field-select"><option>Ruby Play</option><option>Koala Games</option><option>Mad Hat</option><option>Spincraft</option><option>Firerose</option><option>X Slots</option></select></div>
             </div>
             <div class="form-row form-row-3">
-              <div><label class="field-label">Game ID <span class="req">*</span></label><input class="field-input" value="rp_216"><div class="field-hint">Internal ID, e.g. rp_216, kg_5045, mh_10007, sc_15002</div></div>
-              <div><label class="field-label">URL slug</label><input class="field-input" value="bufon-fortuna-deluxe-96"><div class="field-hint">rubyplay.com/games/bufon-fortuna-deluxe-96</div></div>
-              <div><label class="field-label">Release date <span class="req">*</span></label><input class="field-input" type="date" value="2026-06-18"></div>
+              <div><label class="field-label">Game ID <span class="req">*</span></label><input id="ed-gameid" class="field-input" value="rp_216"><div class="field-hint">Internal ID, e.g. rp_216, kg_5045, mh_10007, sc_15002</div></div>
+              <div><label class="field-label">URL slug</label><input id="ed-slug" class="field-input" value="bufon-fortuna-deluxe-96"><div class="field-hint" id="ed-slug-hint">rubyplay.com/games/bufon-fortuna-deluxe-96</div></div>
+              <div><label class="field-label">Release date <span class="req">*</span></label><input id="ed-release" class="field-input" type="date" value="2026-06-18"></div>
             </div>
             <div class="form-row form-row-3">
-              <div><label class="field-label">Game Series <span class="req">*</span></label><select class="field-select"><option>J Mania® (S07)</option><option>Diamond Explosion®</option><option>Mad Hit®</option><option>Voltage Blitz®</option><option>Rush Fever®</option><option>+ Add new series…</option></select></div>
-              <div><label class="field-label">Game Theme <span class="req">*</span></label><select class="field-select"><option>Classical Slot</option><option>Gems</option><option>Egypt / Ra</option><option>Volcano</option><option>+ Add new theme…</option></select></div>
-              <div><label class="field-label">Game Tag <span class="req">*</span></label><select class="field-select"><option>Upcoming</option><option>Live</option><option>Bespoke</option><option>Special Edition (SE)</option></select></div>
+              <div><label class="field-label">Game Series <span class="req">*</span></label><select id="ed-series" class="field-select"><option>J Mania® (S07)</option><option>Diamond Explosion®</option><option>Mad Hit®</option><option>Voltage Blitz®</option><option>Rush Fever®</option><option>Immortal Ways®</option><option>20K+ Ways®</option><option>Goalinko</option><option>Crown Jester</option><option>+ Add new series…</option></select></div>
+              <div><label class="field-label">Game Theme <span class="req">*</span></label><select id="ed-theme" class="field-select"><option>Classical Slot</option><option>Gems</option><option>Classic / Diamonds</option><option>Egypt / Ra</option><option>Sports / Football</option><option>Volcano</option><option>Chinese / Monkey</option><option>South African / Luxury</option><option>Greek / Mythology</option><option>Asian / Jiu Jitsu</option><option>Monarch / Jester</option><option>+ Add new theme…</option></select></div>
+              <div><label class="field-label">Game Tag <span class="req">*</span></label><select id="ed-tag" class="field-select"><option>Upcoming</option><option>Live</option><option>Bespoke</option><option>Special Edition (SE)</option></select></div>
             </div>
             <div class="form-row">
-              <div><label class="field-label">Tagline <span class="req">*</span></label><input class="field-input" value="The jester's luck returns — bigger and bolder" maxlength="80"><div class="field-hint">Shown on game card · max 80 characters · 44 used</div></div>
+              <div><label class="field-label">Tagline <span class="req">*</span></label><input id="ed-tagline" class="field-input" value="The jester's luck returns — bigger and bolder" maxlength="80"><div class="field-hint" id="ed-tagline-hint">Shown on game card · max 80 characters</div></div>
             </div>
             <div class="form-row">
-              <div><label class="field-label">Description <span class="req">*</span></label><textarea class="field-textarea" rows="5"><b>Bufón Fortuna Deluxe is the next chapter in the J Mania® series, a 3×3×3 classical slot bursting with Lucky Respin and the Whirler feature.</b> Spin the deluxe edition for a chance at 3,000x your stake — the trickster jester is back with even more LATAM-flavored fortune.</textarea><div class="field-hint">First paragraph should be bolded. Supports basic formatting.</div></div>
+              <div><label class="field-label">Description <span class="req">*</span></label><textarea id="ed-description" class="field-textarea" rows="5"><b>Bufón Fortuna Deluxe is the next chapter in the J Mania® series, a 3×3×3 classical slot bursting with Lucky Respin and the Whirler feature.</b> Spin the deluxe edition for a chance at 3,000x your stake — the trickster jester is back with even more LATAM-flavored fortune.</textarea><div class="field-hint">First paragraph should be bolded. Supports basic formatting.</div></div>
             </div>
 
             <div class="form-section-h"><span class="num">2</span>Quick stats (shown on game card)</div>
             <div class="form-row form-row-3">
-              <div><label class="field-label">Max Win <span class="req">*</span></label><input class="field-input" value="3,000x"><div class="field-hint">From Max Win Multiplier column</div></div>
-              <div><label class="field-label">Line configuration</label><input class="field-input" value="5 Lines"><div class="field-hint">Or "No Lines" / "243 Ways"</div></div>
-              <div><label class="field-label">Trailer link (YouTube)</label><input class="field-input" value="https://youtube.com/watch?v=..."><div class="field-hint">Skip for SE versions.</div></div>
+              <div><label class="field-label">Max Win <span class="req">*</span></label><input id="ed-maxwin" class="field-input" value="3,000x"><div class="field-hint">From Max Win Multiplier column</div></div>
+              <div><label class="field-label">Line configuration</label><input id="ed-lineconfig" class="field-input" value="5 Lines"><div class="field-hint">Or "No Lines" / "243 Ways"</div></div>
+              <div><label class="field-label">Trailer link (YouTube)</label><input id="ed-trailer" class="field-input" value="https://youtube.com/watch?v=..."><div class="field-hint">Skip for SE versions.</div></div>
             </div>
           </div>
 
@@ -866,36 +866,36 @@
           <div class="tab-pane" data-pane="stats">
             <div class="form-section-h"><span class="num">1</span>Math stats (shown on the public game page)</div>
             <div class="form-row form-row-2">
-              <div><label class="field-label">RTP % <span class="req">*</span></label><input class="field-input" value="96.33"><div class="field-hint">Default RTP · Also has 90/92/94 variants (rp_931–933)</div></div>
-              <div><label class="field-label">Hit Frequency <span class="req">*</span></label><input class="field-input" value="19.06%"><div class="field-hint">From Hit Rate Frequency column</div></div>
+              <div><label class="field-label">RTP % <span class="req">*</span></label><input id="ed-stats-rtp" class="field-input" value="96.33"><div class="field-hint">Default RTP · variants synced from Monday</div></div>
+              <div><label class="field-label">Hit Frequency <span class="req">*</span></label><input id="ed-stats-hitfreq" class="field-input" value="19.06%"><div class="field-hint">From Hit Rate Frequency column</div></div>
             </div>
             <div class="form-row">
               <div>
                 <label class="field-label">Volatility <span class="req">*</span></label>
-                <div class="vol-slider">
-                  <div class="vol-step" onclick="setVol(this)">1 · Low</div>
-                  <div class="vol-step" onclick="setVol(this)">2 · Low-Med</div>
-                  <div class="vol-step" onclick="setVol(this)">3 · Medium</div>
-                  <div class="vol-step" onclick="setVol(this)">4 · Med-High</div>
-                  <div class="vol-step active" onclick="setVol(this)">5 · High</div>
+                <div class="vol-slider" id="ed-vol-slider">
+                  <div class="vol-step" data-vol="1" onclick="setVol(this)">1 · Low</div>
+                  <div class="vol-step" data-vol="2" onclick="setVol(this)">2 · Low-Med</div>
+                  <div class="vol-step" data-vol="3" onclick="setVol(this)">3 · Medium</div>
+                  <div class="vol-step" data-vol="4" onclick="setVol(this)">4 · Med-High</div>
+                  <div class="vol-step active" data-vol="5" onclick="setVol(this)">5 · High</div>
                 </div>
                 <div class="field-hint">Scale: 1 = Low (≤20%), 5 = High (81–100%)</div>
               </div>
             </div>
             <div class="form-row form-row-3">
-              <div><label class="field-label">Max Win <span class="req">*</span></label><input class="field-input" value="3,000x"></div>
-              <div><label class="field-label">Reel Array</label><input class="field-input" value="333"><div class="field-hint">From Reel Array column (e.g. 333, 5×3, 333/777)</div></div>
-              <div><label class="field-label">Lines / Ways</label><input class="field-input" value="5 Lines"></div>
+              <div><label class="field-label">Max Win <span class="req">*</span></label><input id="ed-stats-maxwin" class="field-input" value="3,000x"></div>
+              <div><label class="field-label">Reel Array</label><input id="ed-reelarray" class="field-input" value="333"><div class="field-hint">From Reel Array column (e.g. 333, 5×3, 333/777)</div></div>
+              <div><label class="field-label">Lines / Ways</label><input id="ed-lineways" class="field-input" value="5 Lines"></div>
             </div>
             <div class="form-row form-row-2">
               <div>
                 <label class="field-label">Buy Feature <span class="req">*</span></label>
-                <div class="yn-toggle"><button class="active yes" onclick="ynToggle(this)">Yes</button><button onclick="ynToggle(this)">No</button></div>
+                <div class="yn-toggle" id="ed-buyfeature"><button class="active yes" onclick="ynToggle(this)">Yes</button><button onclick="ynToggle(this)">No</button></div>
               </div>
               <div>
                 <label class="field-label">BF Max Win Multiplier</label>
-                <input class="field-input" value="3,000x">
-                <div class="field-hint">Same as base max win for this game</div>
+                <input id="ed-bfmaxwin" class="field-input" value="3,000x">
+                <div class="field-hint">From BF Max Win Multiplier column</div>
               </div>
             </div>
 
@@ -2859,6 +2859,86 @@ function updateRoleListCounts() {
       usersCell.innerHTML = users.length === 0 ? '<span style="color:var(--slate-400);">0 users</span>' : '<b>' + users.length + '</b> user' + (users.length === 1 ? '' : 's');
     }
   });
+}
+
+// PER-GAME EDITOR DATA — matches poc-data.json
+var gamesData = {
+  'rp_216': { name:'Bufón Fortuna Deluxe 96', studio:'Ruby Play', series:'J Mania® (S07)', theme:'Classical Slot', tag:'Upcoming', status:'Scheduled', statusPill:'pill-sched', releaseDate:'2026-06-18', releaseLabel:'Jun 18, 2026', gameId:'rp_216', slug:'bufon-fortuna-deluxe-96', tagline:"The jester's luck returns — bigger and bolder", description:'<b>Bufón Fortuna Deluxe is the next chapter in the J Mania® series, a 3×3×3 classical slot bursting with Lucky Respin and the Whirler feature.</b> Spin the deluxe edition for a chance at 3,000x your stake.', maxWin:'3,000x', lineConfig:'5 Lines', trailer:'https://youtube.com/watch?v=...', rtp:'96.33', hitFreq:'19.06%', volatility:5, reelArray:'333', buyFeature:true, bfMaxWin:'3,000x', editedBy:'avi@', editedAgo:'2h ago' },
+  'rp_200': { name:'Diamond Explosion 777 96', studio:'Ruby Play', series:'Diamond Explosion® (S02)', theme:'Classic / Diamonds', tag:'Upcoming', status:'Scheduled', statusPill:'pill-sched', releaseDate:'2026-06-04', releaseLabel:'Jun 04, 2026', gameId:'rp_200', slug:'diamond-explosion-777-96', tagline:'Diamonds explode for up to 8,000x wins', description:'<b>Diamond Explosion 777 96 brings the iconic Diamond Explosion® series to 50 paylines with classic fruits and gems.</b> Land 3 scatters for Free Games and Jackpot Pick.', maxWin:'8,000x', lineConfig:'50 Lines', trailer:'https://youtube.com/watch?v=...', rtp:'96.37', hitFreq:'57.51%', volatility:4, reelArray:'5×3', buyFeature:true, bfMaxWin:'8,000x', editedBy:'avi@', editedAgo:'1h ago' },
+  'rp_211': { name:'Mad Hit Diamonds Deluxe 96', studio:'Ruby Play', series:'Mad Hit® (S08)', theme:'Gems', tag:'Upcoming', status:'Scheduled', statusPill:'pill-sched', releaseDate:'2026-06-11', releaseLabel:'Jun 11, 2026', gameId:'rp_211', slug:'mad-hit-diamonds-deluxe-96', tagline:'Collect to win — diamonds deluxe edition', description:'<b>Mad Hit Diamonds Deluxe brings the Mad Hit Collect and Win mechanic to a deluxe diamonds-themed 5-line slot</b> with up to 3,799x your stake.', maxWin:'3,799x', lineConfig:'5 Lines', trailer:'https://youtube.com/watch?v=...', rtp:'96.35', hitFreq:'15.49%', volatility:4, reelArray:'333', buyFeature:true, bfMaxWin:'3,799x', editedBy:'avi@', editedAgo:'4h ago' },
+  'kg_5045': { name:'Voltage Blitz King Ra 96', studio:'Koala Games', series:'Voltage Blitz® (S03)', theme:'Egypt / Ra', tag:'Upcoming', status:'In review', statusPill:'pill-review', releaseDate:'2026-06-25', releaseLabel:'Jun 25, 2026', gameId:'kg_5045', slug:'voltage-blitz-king-ra-96', tagline:'Awaken the power of Ra', description:'<b>Voltage Blitz King Ra 96 is the latest in the Voltage Blitz® series — a 5×3 high-volatility Egyptian-themed slot</b> with the signature Voltage Blitz feature and King Ra Respin.', maxWin:'6,000x', lineConfig:'5 Lines', trailer:'https://youtube.com/watch?v=...', rtp:'96.33', hitFreq:'15.85%', volatility:4, reelArray:'333/777', buyFeature:true, bfMaxWin:'6,000x', editedBy:'maya@', editedAgo:'3h ago' },
+  'kg_5055': { name:'Coelho Jitsu 96', studio:'Koala Games', series:'Voltage Blitz® (S03)', theme:'Asian / Jiu Jitsu', tag:'Upcoming', status:'Scheduled', statusPill:'pill-sched', releaseDate:'2026-06-25', releaseLabel:'Jun 25, 2026', gameId:'kg_5055', slug:'coelho-jitsu-96', tagline:'Roll, flip, win', description:'<b>Coelho Jitsu brings Brazilian jiu-jitsu energy to the Voltage Blitz® series</b> with bold visuals and a 6,000x max win.', maxWin:'6,000x', lineConfig:'5 Lines', trailer:'https://youtube.com/watch?v=...', rtp:'96.33', hitFreq:'15.85%', volatility:4, reelArray:'333/777', buyFeature:true, bfMaxWin:'6,000x', editedBy:'maya@', editedAgo:'6h ago' },
+  'mh_10007': { name:'BetWarrior Goalinko 96', studio:'Mad Hat', series:'Goalinko', theme:'Sports / Football', tag:'Upcoming', status:'In review', statusPill:'pill-review', releaseDate:'2026-06-04', releaseLabel:'Jun 04, 2026', gameId:'mh_10007', slug:'betwarrior-goalinko-96', tagline:'Score the winning goal', description:'<b>BetWarrior Goalinko is the latest co-branded football Plinko-style slot.</b> Drop the ball, hit multipliers, score wins up to 1,613x.', maxWin:'1,613x', lineConfig:'No Lines', trailer:'https://youtube.com/watch?v=...', rtp:'96.36', hitFreq:'100%', volatility:1, reelArray:'Variable', buyFeature:false, bfMaxWin:'—', editedBy:'tom@', editedAgo:'4h ago' },
+  'rp_242': { name:'Jozi Gold: Soft Life Deluxe 96', studio:'Ruby Play', series:'Rush Fever® (S01)', theme:'South African / Luxury', tag:'Upcoming', status:'Scheduled', statusPill:'pill-sched', releaseDate:'2026-06-04', releaseLabel:'Jun 04, 2026', gameId:'rp_242', slug:'jozi-gold-soft-life-deluxe-96', tagline:'Live the soft life — Johannesburg style', description:'<b>Jozi Gold: Soft Life Deluxe is a luxury-themed South African slot in the Rush Fever® series</b> with 243 ways to win.', maxWin:'4,544x', lineConfig:'243 Ways', trailer:'https://youtube.com/watch?v=...', rtp:'96.37', hitFreq:'28.37%', volatility:3, reelArray:'33333', buyFeature:true, bfMaxWin:'4,544x', editedBy:'avi@', editedAgo:'1d ago' },
+  'sc_15002': { name:'Sweet Crowns', studio:'Spincraft', series:'Crown Jester', theme:'Monarch / Jester', tag:'Upcoming', status:'Draft', statusPill:'pill-draft', releaseDate:'', releaseLabel:'TBD', gameId:'sc_15002', slug:'sweet-crowns', tagline:'Sweet rewards await', description:"<b>Spincraft's premium Sweet Crowns slot — a monarch-themed Any Pay format</b> with 6,056x max win.", maxWin:'6,056x', lineConfig:'Any Pay', trailer:'', rtp:'94.53', hitFreq:'41.95%', volatility:5, reelArray:'555555', buyFeature:true, bfMaxWin:'6,056x', editedBy:'daniel@', editedAgo:'5h ago' },
+  'rp_228': { name:'J Mania Goal Nations 96', studio:'Ruby Play', series:'J Mania® (S07)', theme:'Sports / Football', tag:'Live', status:'Live', statusPill:'pill-live', releaseDate:'2026-05-28', releaseLabel:'May 28, 2026', gameId:'rp_228', slug:'j-mania-goal-nations-96', tagline:'Compete for the nations cup', description:'<b>J Mania Goal Nations brings football fever to the iconic J Mania® series</b> with a 5,000x max win.', maxWin:'5,000x', lineConfig:'5 Lines', trailer:'https://youtube.com/watch?v=...', rtp:'96.36', hitFreq:'10.19%', volatility:5, reelArray:'333', buyFeature:true, bfMaxWin:'5,000x', editedBy:'avi@', editedAgo:'1w ago' },
+  'kg_5551': { name:'Voltage Blitz Heat Rush 96', studio:'Koala Games', series:'Voltage Blitz® (S02)', theme:'Volcano', tag:'Live', status:'Live', statusPill:'pill-live', releaseDate:'2026-05-21', releaseLabel:'May 21, 2026', gameId:'kg_5551', slug:'voltage-blitz-heat-rush-96', tagline:'Erupt for explosive wins', description:'<b>Voltage Blitz Heat Rush 96 brings volcano theme to the Voltage Blitz® series</b> with Lava Wilds and a 5,000x max win.', maxWin:'5,000x', lineConfig:'No Lines', trailer:'https://youtube.com/watch?v=...', rtp:'96.31', hitFreq:'10.19%', volatility:5, reelArray:'333', buyFeature:true, bfMaxWin:'5,000x', editedBy:'maya@', editedAgo:'1w ago' }
+};
+
+function openGame(gameId) {
+  var g = gamesData[gameId];
+  if (!g) { switchView('editor'); return; }
+  window.currentGameId = gameId;
+  // Header
+  var set = function(id, val) { var el = document.getElementById(id); if (el) { if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') el.value = val; else el.textContent = val; } };
+  set('ed-title', g.name);
+  var pill = document.getElementById('ed-status-pill'); if (pill) { pill.className = 'pill ' + g.statusPill; pill.textContent = g.status; }
+  var tagPill = document.getElementById('ed-tag-pill'); if (tagPill) tagPill.textContent = g.tag;
+  var meta = document.getElementById('ed-meta');
+  if (meta) {
+    var dateBit = g.releaseDate ? ((g.status === 'Live' ? 'Released ' : 'Scheduled for ') + g.releaseLabel) : 'Release date TBD';
+    meta.textContent = g.studio + ' · ' + g.series + ' · Game ID: ' + g.gameId + ' · ' + dateBit + ' · last edited ' + g.editedAgo + ' by ' + g.editedBy;
+  }
+  // Basic info
+  set('ed-name', g.name);
+  var studioSel = document.getElementById('ed-studio'); if (studioSel) studioSel.value = g.studio;
+  set('ed-gameid', g.gameId);
+  set('ed-slug', g.slug);
+  set('ed-release', g.releaseDate);
+  var slugHint = document.getElementById('ed-slug-hint'); if (slugHint) slugHint.textContent = 'rubyplay.com/games/' + g.slug;
+  var seriesSel = document.getElementById('ed-series'); if (seriesSel) {
+    var found = false;
+    for (var i = 0; i < seriesSel.options.length; i++) { if (seriesSel.options[i].text === g.series) { seriesSel.selectedIndex = i; found = true; break; } }
+    if (!found) seriesSel.selectedIndex = 0;
+  }
+  var themeSel = document.getElementById('ed-theme'); if (themeSel) {
+    for (var i = 0; i < themeSel.options.length; i++) { if (themeSel.options[i].text === g.theme) { themeSel.selectedIndex = i; break; } }
+  }
+  var tagSel = document.getElementById('ed-tag'); if (tagSel) {
+    for (var i = 0; i < tagSel.options.length; i++) { if (tagSel.options[i].text.indexOf(g.tag) === 0) { tagSel.selectedIndex = i; break; } }
+  }
+  set('ed-tagline', g.tagline);
+  var taglineHint = document.getElementById('ed-tagline-hint'); if (taglineHint) taglineHint.textContent = 'Shown on game card · max 80 characters · ' + g.tagline.length + ' used';
+  set('ed-description', g.description);
+  set('ed-maxwin', g.maxWin);
+  set('ed-lineconfig', g.lineConfig);
+  set('ed-trailer', g.trailer);
+  // Stats tab
+  set('ed-stats-rtp', g.rtp);
+  set('ed-stats-hitfreq', g.hitFreq);
+  set('ed-stats-maxwin', g.maxWin);
+  set('ed-reelarray', g.reelArray);
+  set('ed-lineways', g.lineConfig);
+  set('ed-bfmaxwin', g.bfMaxWin);
+  // Volatility slider
+  document.querySelectorAll('#ed-vol-slider .vol-step').forEach(function(step) {
+    step.classList.remove('active');
+    if (parseInt(step.getAttribute('data-vol'), 10) === g.volatility) step.classList.add('active');
+  });
+  // Buy Feature toggle
+  var bf = document.getElementById('ed-buyfeature');
+  if (bf) {
+    var btns = bf.querySelectorAll('button');
+    btns.forEach(function(b) { b.classList.remove('active', 'yes', 'no'); });
+    btns[0].classList.add('yes');
+    btns[1].classList.add('no');
+    if (g.buyFeature) btns[0].classList.add('active');
+    else btns[1].classList.add('active');
+  }
+  // Update breadcrumb title
+  switchView('editor');
+  var crumb = document.getElementById('crumb');
+  if (crumb) crumb.innerHTML = '<a onclick="switchView(\'games\')">Games</a> <span class="sep">›</span> <b>' + g.name + '</b>';
 }
 
 function openSeries(seriesName) { clearAllFilters(); applyFilter('series', seriesName); switchView('games'); }
