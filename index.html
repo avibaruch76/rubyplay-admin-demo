@@ -2897,6 +2897,9 @@ function setPreviewDevice(d) {
 }
 
 function rpHeader(studioName, brandColor) {
+  // Skip the inner tab bar + nav when rendering inside the site preview view
+  // (the outer chrome already provides them)
+  if (window.previewInSiteContext) return '';
   brandColor = brandColor || '#ef4444';
   studioName = studioName || 'RUBYPLAY';
   // Tab bar at top
@@ -3362,7 +3365,10 @@ function renderSitePreview() {
   }
   var renderer = pagePreviews[key];
   if (!renderer) { body.innerHTML = '<div style="padding:40px; text-align:center; color:var(--slate-500);">Preview not available for this page yet.</div>'; return; }
+  // Set flag so rpHeader() skips the inner tab bar/nav while rendering inside the site preview view
+  window.previewInSiteContext = true;
   var content = renderer(studioKey || sitePreviewState.studio);
+  window.previewInSiteContext = false;
   body.innerHTML = siteDevice === 'mobile'
     ? '<div style="max-width:380px; margin:24px auto; box-shadow:0 12px 40px rgba(0,0,0,0.15); border-radius:18px; overflow:hidden; background:white;">'+content+'</div>'
     : '<div style="background:white;">'+content+'</div>';
