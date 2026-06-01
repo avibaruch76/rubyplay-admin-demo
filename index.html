@@ -357,6 +357,7 @@
       <div class="nav-item" data-view="public-pages"><span class="nav-icon">📄</span>Pages</div>
       <div class="nav-item" data-view="public-nav"><span class="nav-icon">≡</span>Navigation</div>
       <div class="nav-item" data-view="public-footer"><span class="nav-icon">▭</span>Footer</div>
+      <div class="nav-item" data-view="site-preview" style="color:var(--red); font-weight:600;"><span class="nav-icon">👁</span>Live site preview</div>
       <div class="nav-section">Workflow</div>
       <div class="nav-item" data-view="review"><span class="nav-icon">✓</span>Review queue<span class="nav-badge">7</span></div>
       <div class="nav-section">Admin</div>
@@ -1573,6 +1574,41 @@
         </div>
       </section>
 
+      <!-- LIVE SITE PREVIEW -->
+      <section class="view" id="view-site-preview">
+        <div class="page-header-row">
+          <div><h1 class="page-title">Live site preview</h1><p class="page-sub">Browse the public site as a visitor would. Switch studios via the tab bar — switch pages via the studio nav.</p></div>
+          <div class="actions">
+            <span style="font-size:11px; color:var(--slate-500); margin-right:8px;">Device:</span>
+            <button id="sitePvDesktop" class="btn btn-ghost btn-sm" style="background:var(--slate-100);" onclick="setSitePreviewDevice('desktop')">🖥 Desktop</button>
+            <button id="sitePvMobile" class="btn btn-ghost btn-sm" onclick="setSitePreviewDevice('mobile')">📱 Mobile</button>
+            <button class="btn btn-ghost" onclick="toast('Opened rubyplay.com in new tab','info')">↗ Open</button>
+          </div>
+        </div>
+
+        <!-- Studio Tab Bar -->
+        <div style="background:#0a0a0a; padding:10px 18px; border-radius:10px 10px 0 0; display:flex; gap:6px; overflow-x:auto;" id="sitePreviewStudioBar">
+          <div class="site-pv-studio active" data-studio="group" data-name="RubyPlay Group" data-color="#ef4444" onclick="switchSitePreviewStudio(this,'group')" style="background:white; color:#ef4444; padding:10px 18px; border-radius:6px 6px 0 0; font-size:13px; font-weight:700; cursor:pointer; margin-bottom:-1px; white-space:nowrap;">▶ GROUP</div>
+          <div class="site-pv-studio" data-studio="rubyplay" data-name="Ruby Play" data-color="#ef4444" onclick="switchSitePreviewStudio(this,'rubyplay')" style="background:#1f1f1f; color:#ef4444; padding:10px 14px; border-radius:6px; font-size:14px; cursor:pointer;">▶</div>
+          <div class="site-pv-studio" data-studio="koala" data-name="Koala Games" data-color="#fbbf24" onclick="switchSitePreviewStudio(this,'koala')" style="background:#1f1f1f; color:#fbbf24; padding:10px 14px; border-radius:6px; font-size:14px; cursor:pointer;">◐</div>
+          <div class="site-pv-studio" data-studio="firerose" data-name="Firerose" data-color="#dc2626" onclick="switchSitePreviewStudio(this,'firerose')" style="background:#1f1f1f; color:#dc2626; padding:10px 14px; border-radius:6px; font-size:14px; cursor:pointer; opacity:0.5;" title="Coming soon — no games yet">✿</div>
+          <div class="site-pv-studio" data-studio="madhat" data-name="Mad Hat" data-color="#fbbf24" onclick="switchSitePreviewStudio(this,'madhat')" style="background:#1f1f1f; color:#fbbf24; padding:10px 14px; border-radius:6px; font-size:14px; cursor:pointer;">🎩</div>
+          <div class="site-pv-studio" data-studio="spincraft" data-name="Spincraft" data-color="#fbbf24" onclick="switchSitePreviewStudio(this,'spincraft')" style="background:#1f1f1f; color:#fbbf24; padding:10px 14px; border-radius:6px; font-size:14px; cursor:pointer;">♛</div>
+          <div class="site-pv-studio" data-studio="xslots" data-name="X Slots" data-color="#cbd5e1" onclick="switchSitePreviewStudio(this,'xslots')" style="background:#1f1f1f; color:#cbd5e1; padding:10px 14px; border-radius:6px; font-size:14px; cursor:pointer; opacity:0.5;" title="Coming soon — no games yet">✕</div>
+          <div style="margin-left:auto; color:white; font-size:11px; display:flex; align-items:center; gap:6px;">🇬🇧 EN</div>
+        </div>
+
+        <!-- Page Tabs (changes based on studio context) -->
+        <div id="sitePreviewPageTabs" style="background:white; border:1px solid var(--slate-200); border-top:none; padding:12px 22px; display:flex; gap:18px; font-size:13px; color:#0a0a0a; align-items:center; border-bottom:1px solid var(--slate-200);">
+          <!-- populated by JS -->
+        </div>
+
+        <!-- Main preview body -->
+        <div id="sitePreviewBody" style="background:var(--slate-100); border:1px solid var(--slate-200); border-top:none; border-radius:0 0 10px 10px; min-height:600px; overflow-y:auto;">
+          <!-- populated by JS -->
+        </div>
+      </section>
+
       <!-- USERS -->
       <section class="view" id="view-users">
         <div class="page-header-row"><div><h1 class="page-title">Users & roles</h1><p class="page-sub">Manage who can access the admin and what they can do.</p></div><div class="actions" id="usersActions"><button class="btn btn-primary" onclick="openModal('inviteUser')">+ Invite user</button></div></div>
@@ -2425,11 +2461,15 @@ function switchView(view) {
   if (target) target.classList.add('active');
   var nav = document.querySelector('[data-view="' + view + '"]');
   if (nav) nav.classList.add('active');
-  var titles = {dashboard:'Dashboard', games:'Games', studios:'Studios', editor:'<a onclick="switchView(\'games\')">Games</a> <span class="sep">›</span> <b>Bufón Fortuna Deluxe 96</b>', review:'Review queue', releases:'Release calendar', media:'Media library', translations:'Translations', users:'Users & roles', settings:'Settings', series:'Game Series', themes:'Game Themes', news:'News & Press', 'public-home':'<a onclick="switchView(\'public-pages\')">Public site</a> <span class="sep">›</span> <b>Group Homepage</b>', 'public-pages':'<a onclick="switchView(\'public-pages\')">Public site</a> <span class="sep">›</span> <b>Pages</b>', 'public-nav':'<a onclick="switchView(\'public-pages\')">Public site</a> <span class="sep">›</span> <b>Navigation</b>', 'public-footer':'<a onclick="switchView(\'public-pages\')">Public site</a> <span class="sep">›</span> <b>Footer</b>', 'studio-detail':'<a onclick="switchView(\'studios\')">Studios</a> <span class="sep">›</span> <b>'+(window.currentStudioName||'Studio')+'</b>'};
+  var titles = {dashboard:'Dashboard', games:'Games', studios:'Studios', editor:'<a onclick="switchView(\'games\')">Games</a> <span class="sep">›</span> <b>Bufón Fortuna Deluxe 96</b>', review:'Review queue', releases:'Release calendar', media:'Media library', translations:'Translations', users:'Users & roles', settings:'Settings', series:'Game Series', themes:'Game Themes', news:'News & Press', 'public-home':'<a onclick="switchView(\'public-pages\')">Public site</a> <span class="sep">›</span> <b>Group Homepage</b>', 'public-pages':'<a onclick="switchView(\'public-pages\')">Public site</a> <span class="sep">›</span> <b>Pages</b>', 'public-nav':'<a onclick="switchView(\'public-pages\')">Public site</a> <span class="sep">›</span> <b>Navigation</b>', 'public-footer':'<a onclick="switchView(\'public-pages\')">Public site</a> <span class="sep">›</span> <b>Footer</b>', 'site-preview':'<a onclick="switchView(\'public-pages\')">Public site</a> <span class="sep">›</span> <b>Live preview</b>', 'studio-detail':'<a onclick="switchView(\'studios\')">Studios</a> <span class="sep">›</span> <b>'+(window.currentStudioName||'Studio')+'</b>'};
   var crumb = document.getElementById('crumb');
   if (crumb) crumb.innerHTML = view === 'editor' ? titles.editor : '<b>'+ (titles[view]||view) +'</b>';
   document.querySelector('.content').scrollTop = 0; window.scrollTo(0,0);
   closeUserMenu(); closeNotif();
+  if (view === 'site-preview' && typeof renderSitePreview === 'function') {
+    renderSitePreviewNav();
+    renderSitePreview();
+  }
 }
 document.querySelectorAll('.nav-item').forEach(item => { item.addEventListener('click', function() { var v = this.getAttribute('data-view'); if (v) switchView(v); }); });
 
@@ -3113,6 +3153,221 @@ var pagePreviews = {
     rpFooter();
   }
 };
+
+// Games index page for site preview (per studio)
+pagePreviews['games-index'] = function(studioKey) {
+  var s = studiosData[studioKey||'rubyplay'];
+  var brandColor = studioKey === 'group' ? '#ef4444' : (s ? s.primary : '#ef4444');
+  var name = studioKey === 'group' ? 'RUBYPLAY' : (s ? s.name : 'Ruby Play');
+  // sample games per studio
+  var gamesByStudio = {
+    group: [
+      {n:'Bufón Fortuna Deluxe 96', bg:'linear-gradient(135deg,#dc2626,#7c2d12)', rtp:'96.33%', vol:'High', max:'3,000x', hf:'19.06%', studio:'Ruby Play'},
+      {n:'Diamond Explosion 777 96', bg:'linear-gradient(135deg,#ef4444,#7c2d12)', rtp:'96.37%', vol:'Med-High', max:'8,000x', hf:'57.51%', studio:'Ruby Play'},
+      {n:'Voltage Blitz King Ra 96', bg:'linear-gradient(135deg,#7c3aed,#1e1b4b)', rtp:'96.33%', vol:'Med-High', max:'6,000x', hf:'15.85%', studio:'Koala Games'},
+      {n:'Mad Hit Diamonds Deluxe 96', bg:'linear-gradient(135deg,#f59e0b,#78350f)', rtp:'96.35%', vol:'Med-High', max:'3,799x', hf:'15.49%', studio:'Ruby Play'},
+      {n:'J Mania Goal Nations 96', bg:'linear-gradient(135deg,#fbbf24,#0f172a)', rtp:'96.36%', vol:'High', max:'5,000x', hf:'10.19%', studio:'Ruby Play'},
+      {n:'BetWarrior Goalinko 96', bg:'linear-gradient(135deg,#16a34a,#052e16)', rtp:'96.36%', vol:'Low', max:'1,613x', hf:'100%', studio:'Mad Hat'},
+      {n:'Coelho Jitsu 96', bg:'linear-gradient(135deg,#0ea5e9,#0c4a6e)', rtp:'96.33%', vol:'Med-High', max:'6,000x', hf:'15.85%', studio:'Koala Games'},
+      {n:'Sweet Crowns', bg:'linear-gradient(135deg,#f59e0b,#b91c1c)', rtp:'94.53%', vol:'High', max:'6,056x', hf:'41.95%', studio:'Spincraft'},
+      {n:'Voltage Blitz Heat Rush 96', bg:'linear-gradient(135deg,#7c3aed,#0c4a6e)', rtp:'96.31%', vol:'High', max:'5,000x', hf:'10.19%', studio:'Koala Games'}
+    ],
+    rubyplay: [
+      {n:'Bufón Fortuna Deluxe 96', bg:'linear-gradient(135deg,#dc2626,#7c2d12)', rtp:'96.33%', vol:'High', max:'3,000x', hf:'19.06%', studio:'Ruby Play'},
+      {n:'Diamond Explosion 777 96', bg:'linear-gradient(135deg,#ef4444,#7c2d12)', rtp:'96.37%', vol:'Med-High', max:'8,000x', hf:'57.51%', studio:'Ruby Play'},
+      {n:'Mad Hit Diamonds Deluxe 96', bg:'linear-gradient(135deg,#f59e0b,#78350f)', rtp:'96.35%', vol:'Med-High', max:'3,799x', hf:'15.49%', studio:'Ruby Play'},
+      {n:'Jozi Gold: Soft Life Deluxe 96', bg:'linear-gradient(135deg,#be185d,#500724)', rtp:'96.37%', vol:'Medium', max:'4,544x', hf:'28.37%', studio:'Ruby Play'},
+      {n:'J Mania Goal Nations 96', bg:'linear-gradient(135deg,#fbbf24,#0f172a)', rtp:'96.36%', vol:'High', max:'5,000x', hf:'10.19%', studio:'Ruby Play'},
+      {n:'Immortal Ways 3 Fates 94', bg:'linear-gradient(135deg,#0f172a,#475569)', rtp:'94.33%', vol:'Med-High', max:'8,500x', hf:'12%', studio:'Ruby Play'}
+    ],
+    koala: [
+      {n:'Voltage Blitz King Ra 96', bg:'linear-gradient(135deg,#7c3aed,#1e1b4b)', rtp:'96.33%', vol:'Med-High', max:'6,000x', hf:'15.85%', studio:'Koala Games'},
+      {n:'Coelho Jitsu 96', bg:'linear-gradient(135deg,#0ea5e9,#0c4a6e)', rtp:'96.33%', vol:'Med-High', max:'6,000x', hf:'15.85%', studio:'Koala Games'},
+      {n:'Voltage Blitz Heat Rush 96', bg:'linear-gradient(135deg,#7c3aed,#0c4a6e)', rtp:'96.31%', vol:'High', max:'5,000x', hf:'10.19%', studio:'Koala Games'},
+      {n:'20K+ Ways Buffalo Lights 96', bg:'linear-gradient(135deg,#fbbf24,#7c2d12)', rtp:'96.34%', vol:'Med-High', max:'4,502x', hf:'12%', studio:'Koala Games'},
+      {n:'Voltage Blitz Lucky Wukong 96', bg:'linear-gradient(135deg,#dc2626,#1e1b4b)', rtp:'96.31%', vol:'High', max:'5,000x', hf:'10.19%', studio:'Koala Games'},
+      {n:'Betway Blitz Rapid Reels 96', bg:'linear-gradient(135deg,#7c3aed,#475569)', rtp:'96.31%', vol:'High', max:'5,000x', hf:'10.19%', studio:'Koala Games'}
+    ],
+    madhat: [
+      {n:'BetWarrior Goalinko 96', bg:'linear-gradient(135deg,#16a34a,#052e16)', rtp:'96.36%', vol:'Low', max:'1,613x', hf:'100%', studio:'Mad Hat'},
+      {n:'Coolbet Goalinko 96', bg:'linear-gradient(135deg,#22c55e,#052e16)', rtp:'96.36%', vol:'Low', max:'1,613x', hf:'100%', studio:'Mad Hat'},
+      {n:'Betway Goalinko 97', bg:'linear-gradient(135deg,#16a34a,#0f172a)', rtp:'97.36%', vol:'Low', max:'1,426x', hf:'100%', studio:'Mad Hat'},
+      {n:'Goalinko 96', bg:'linear-gradient(135deg,#0a0a0a,#16a34a)', rtp:'96.36%', vol:'Low', max:'1,613x', hf:'100%', studio:'Mad Hat'}
+    ],
+    spincraft: [
+      {n:'Crown Jester Gold 94', bg:'linear-gradient(135deg,#fbbf24,#16a34a)', rtp:'94.57%', vol:'High', max:'3,040x', hf:'18%', studio:'Spincraft'},
+      {n:'Crown Jester 94', bg:'linear-gradient(135deg,#f59e0b,#052e16)', rtp:'94.46%', vol:'Med-High', max:'1,040x', hf:'20%', studio:'Spincraft'},
+      {n:'Sweet Crowns', bg:'linear-gradient(135deg,#f59e0b,#b91c1c)', rtp:'94.53%', vol:'High', max:'6,056x', hf:'41.95%', studio:'Spincraft'}
+    ]
+  };
+  var games = gamesByStudio[studioKey] || gamesByStudio.rubyplay;
+  var gameCards = games.map(function(g){
+    return '<div style="background:white; border-radius:10px; overflow:hidden; cursor:pointer; transition:transform 0.15s;" onmouseover="this.style.transform=\'translateY(-4px)\';" onmouseout="this.style.transform=\'\';" onclick="window.currentPreviewGame='+JSON.stringify(g).replace(/"/g,'&quot;')+'; openPagePreview(\'game-detail\',\''+studioKey+'\');">'+
+      '<div style="aspect-ratio:1; background:'+g.bg+'; position:relative;">'+
+        '<div style="position:absolute;bottom:10px;left:12px;right:12px;color:white;font-weight:800;font-size:14px;text-shadow:0 2px 8px rgba(0,0,0,0.5);">'+g.n+'</div>'+
+      '</div>'+
+      '<div style="padding:14px 16px; background:#0a0a0a; color:white;">'+
+        '<div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="font-size:10px; opacity:0.6;">RTP</span><b style="font-size:12px; color:'+brandColor+';">'+g.rtp+'</b></div>'+
+        '<div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="font-size:10px; opacity:0.6;">Volatility</span><b style="font-size:12px;">'+g.vol+'</b></div>'+
+        '<div style="display:flex; justify-content:space-between;"><span style="font-size:10px; opacity:0.6;">Max Win</span><b style="font-size:12px; color:'+brandColor+';">'+g.max+'</b></div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+  return rpHeader(name, brandColor) +
+    '<div style="background:#0a0a0a; padding:40px 32px; min-height:600px;">'+
+      '<div style="display:flex; align-items:center; gap:18px; margin-bottom:24px;">'+
+        '<div style="color:white; font-size:28px; font-weight:800;">Our Games</div>'+
+        '<div style="margin-left:auto; display:flex; gap:8px; align-items:center;">'+
+          '<span style="color:white; font-size:12px; opacity:0.6;">↕ Sort: Release Date</span>'+
+          '<button style="background:'+brandColor+'; color:white; border:none; padding:8px 18px; border-radius:20px; font-size:12px; font-weight:600;">▤ Filters</button>'+
+          '<button style="background:transparent; color:white; border:1px solid white; padding:8px 14px; border-radius:20px; font-size:12px;">🔍</button>'+
+        '</div>'+
+      '</div>'+
+      '<div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;">'+gameCards+'</div>'+
+      '<div style="text-align:center; margin-top:30px;"><button style="background:'+brandColor+'; color:white; border:none; padding:14px 36px; border-radius:24px; font-size:14px; font-weight:700; cursor:pointer;">Load More Games</button></div>'+
+    '</div>'+
+    rpFooter();
+};
+
+// Game detail page renderer
+pagePreviews['game-detail'] = function(studioKey) {
+  var s = studiosData[studioKey||'rubyplay'];
+  var brandColor = studioKey === 'group' ? '#ef4444' : (s ? s.primary : '#ef4444');
+  var name = studioKey === 'group' ? 'RUBYPLAY' : (s ? s.name : 'Ruby Play');
+  var g = window.currentPreviewGame || {n:'Bufón Fortuna Deluxe 96', bg:'linear-gradient(135deg,#dc2626,#7c2d12)', rtp:'96.33%', vol:'High', max:'3,000x', hf:'19.06%', studio:'Ruby Play'};
+  return rpHeader(name, brandColor) +
+    '<div style="background:white; padding:30px 40px 10px; text-align:center;">'+
+      '<div style="font-size:32px; font-weight:800; color:#0a0a0a; letter-spacing:-0.02em;">'+g.n+'</div>'+
+    '</div>'+
+    '<div style="padding:0 40px;">'+
+      '<div style="aspect-ratio:21/9; background:'+g.bg+'; border-radius:14px; position:relative; overflow:hidden; display:flex; align-items:flex-end; padding:30px;">'+
+        '<div>'+
+          '<div style="color:white; font-size:48px; font-weight:900; text-shadow:0 4px 16px rgba(0,0,0,0.5); margin-bottom:10px;">'+g.n.toUpperCase()+'</div>'+
+          '<button style="background:'+brandColor+'; color:white; border:none; padding:14px 36px; border-radius:24px; font-size:14px; font-weight:700; cursor:pointer; margin-right:10px;">▶ Play Demo</button>'+
+          '<button style="background:transparent; color:white; border:1px solid white; padding:14px 28px; border-radius:24px; font-size:14px; font-weight:600; cursor:pointer;">▶ Watch Trailer</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div style="background:#0a0a0a; color:white; padding:40px; margin-top:30px;">'+
+      '<div style="text-align:center; color:'+brandColor+'; font-size:14px; font-weight:700; margin-bottom:18px;">Supporting one-liner, game intro</div>'+
+      '<div style="max-width:880px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr; gap:40px; align-items:start;">'+
+        '<div style="font-size:13px; line-height:1.8; opacity:0.85;">Climb Mount Olympus in this 6-reel epic where Zeus himself awakens with cascading wins. Lightning wilds and a maximum '+g.max+' payout await. Each spin can trigger the wrath of the gods — culminating in the Zeus respin feature where divine multipliers stack to deliver legendary wins.<br><br>Nulla blandit ac metus interdum vestibulum. Suspendisse metus leo, pellentesque non odio quis, blandit molestie eros. Nulla lacinia massa ac ullamcorper iaculis.</div>'+
+        '<div>'+
+          '<div style="background:'+brandColor+'; color:white; border:none; padding:12px 24px; border-radius:24px; font-size:13px; font-weight:700; text-align:center; cursor:pointer; margin-bottom:18px;">▶ Play Demo</div>'+
+          '<div style="font-size:12px;">'+
+            '<div style="display:flex; align-items:center; gap:8px; padding:5px 0;"><span style="color:'+brandColor+'; font-size:14px;">●</span><span>Lucky Respin</span></div>'+
+            '<div style="display:flex; align-items:center; gap:8px; padding:5px 0;"><span style="color:'+brandColor+'; font-size:14px;">●</span><span>The Whirler</span></div>'+
+            '<div style="display:flex; align-items:center; gap:8px; padding:5px 0;"><span style="color:'+brandColor+'; font-size:14px;">●</span><span>Buy Feature</span></div>'+
+          '</div>'+
+          '<div style="margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.1); font-size:11px; line-height:2;">'+
+            '<div><span style="opacity:0.6;">RTP:</span> <b style="color:'+brandColor+';">'+g.rtp+'</b></div>'+
+            '<div><span style="opacity:0.6;">Volatility:</span> <b style="color:'+brandColor+';">'+g.vol+'</b></div>'+
+            '<div><span style="opacity:0.6;">Hit Frequency:</span> <b style="color:'+brandColor+';">'+g.hf+'</b></div>'+
+            '<div><span style="opacity:0.6;">Max Win:</span> <b style="color:'+brandColor+';">'+g.max+'</b></div>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div style="background:white; padding:30px 40px; text-align:center;">'+
+      '<div style="display:flex; gap:14px; justify-content:center; margin-bottom:24px;">'+
+        '<button style="background:'+brandColor+'; color:white; border:none; padding:12px 28px; border-radius:24px; font-size:13px; font-weight:700; cursor:pointer;">Watch Trailer</button>'+
+        '<button style="background:transparent; color:#0a0a0a; border:1px solid '+brandColor+'; padding:12px 28px; border-radius:24px; font-size:13px; font-weight:600; cursor:pointer;">Download Art Media Pack</button>'+
+      '</div>'+
+      '<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px; max-width:880px; margin:0 auto;">'+
+        '<div style="aspect-ratio:16/10; background:'+g.bg+'; border-radius:8px;"></div>'+
+        '<div style="aspect-ratio:16/10; background:'+g.bg+'; opacity:0.85; border-radius:8px;"></div>'+
+        '<div style="aspect-ratio:16/10; background:'+g.bg+'; opacity:0.7; border-radius:8px;"></div>'+
+      '</div>'+
+    '</div>'+
+    rpFooter();
+};
+
+// SITE PREVIEW state + functions
+var sitePreviewState = { studio: 'group', page: 'home' };
+var siteDevice = 'desktop';
+
+function setSitePreviewDevice(d) {
+  siteDevice = d;
+  document.getElementById('sitePvDesktop').style.background = d === 'desktop' ? 'var(--slate-100)' : 'white';
+  document.getElementById('sitePvMobile').style.background = d === 'mobile' ? 'var(--slate-100)' : 'white';
+  renderSitePreview();
+}
+
+function switchSitePreviewStudio(el, studio) {
+  document.querySelectorAll('.site-pv-studio').forEach(function(s) {
+    s.style.background = '#1f1f1f';
+    s.style.padding = '10px 14px';
+    s.style.fontSize = '14px';
+    s.style.borderRadius = '6px';
+    s.style.marginBottom = '0';
+    s.classList.remove('active');
+  });
+  el.classList.add('active');
+  el.style.background = 'white';
+  el.style.fontSize = '13px';
+  el.style.padding = '10px 18px';
+  el.style.borderRadius = '6px 6px 0 0';
+  el.style.marginBottom = '-1px';
+  el.style.fontWeight = '700';
+  if (studio === 'group') el.innerHTML = '▶ GROUP';
+  else el.style.color = el.getAttribute('data-color');
+  // Reset content of others
+  document.querySelectorAll('.site-pv-studio:not(.active)').forEach(function(s) {
+    var key = s.getAttribute('data-studio');
+    if (key === 'group') s.innerHTML = '▶';
+    else if (key === 'rubyplay') s.innerHTML = '▶';
+    else if (key === 'koala') s.innerHTML = '◐';
+    else if (key === 'firerose') s.innerHTML = '✿';
+    else if (key === 'madhat') s.innerHTML = '🎩';
+    else if (key === 'spincraft') s.innerHTML = '♛';
+    else if (key === 'xslots') s.innerHTML = '✕';
+  });
+  sitePreviewState.studio = studio;
+  sitePreviewState.page = 'home';
+  renderSitePreviewNav();
+  renderSitePreview();
+}
+
+function switchSitePreviewPage(page) {
+  sitePreviewState.page = page;
+  renderSitePreviewNav();
+  renderSitePreview();
+}
+
+function renderSitePreviewNav() {
+  var nav = document.getElementById('sitePreviewPageTabs');
+  if (!nav) return;
+  var isGroup = sitePreviewState.studio === 'group';
+  var s = studiosData[sitePreviewState.studio];
+  var brandColor = isGroup ? '#ef4444' : (s ? s.primary : '#ef4444');
+  var pages = isGroup
+    ? [{key:'home',label:'Home'},{key:'partners',label:'Our Partners'},{key:'about',label:'About Us'},{key:'news',label:'News'},{key:'amp',label:'Art Media Pack'},{key:'contact',label:'Contact'},{key:'privacy',label:'Privacy'}]
+    : [{key:'home',label:'Home'},{key:'games',label:'Our Games'},{key:'about',label:'About Us'},{key:'amp',label:'Art Media Pack'},{key:'contact',label:'Contact'}];
+  nav.innerHTML = pages.map(function(p){
+    var isActive = sitePreviewState.page === p.key;
+    return '<span onclick="switchSitePreviewPage(\''+p.key+'\')" style="cursor:pointer; padding:4px 0; '+(isActive?'color:'+brandColor+'; border-bottom:2px solid '+brandColor+'; font-weight:700;':'color:#475569;')+'">'+p.label+'</span>';
+  }).join('') + '<span style="margin-left:auto; font-size:11px; color:var(--slate-400);">Studio: <b style="color:'+brandColor+';">'+(isGroup?'RubyPlay Group':s.name)+'</b></span>';
+}
+
+function renderSitePreview() {
+  var body = document.getElementById('sitePreviewBody');
+  if (!body) return;
+  var key, studioKey = sitePreviewState.studio === 'group' ? null : sitePreviewState.studio;
+  if (sitePreviewState.studio === 'group') {
+    var pageMap = {home:'group-home', about:'group-about', partners:'group-partners', contact:'group-contact', amp:'group-amp', privacy:'group-privacy', news:'news-index'};
+    key = pageMap[sitePreviewState.page] || 'group-home';
+  } else {
+    var pageMap = {home:'studio-home', games:'games-index', about:'studio-about', contact:'studio-contact', amp:'studio-home'};
+    key = pageMap[sitePreviewState.page] || 'studio-home';
+  }
+  var renderer = pagePreviews[key];
+  if (!renderer) { body.innerHTML = '<div style="padding:40px; text-align:center; color:var(--slate-500);">Preview not available for this page yet.</div>'; return; }
+  var content = renderer(studioKey || sitePreviewState.studio);
+  body.innerHTML = siteDevice === 'mobile'
+    ? '<div style="max-width:380px; margin:24px auto; box-shadow:0 12px 40px rgba(0,0,0,0.15); border-radius:18px; overflow:hidden; background:white;">'+content+'</div>'
+    : '<div style="background:white;">'+content+'</div>';
+  body.scrollTop = 0;
+}
 
 function openPagePreview(key, studioKey) {
   window.currentPreviewKey = key;
