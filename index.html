@@ -770,14 +770,19 @@
         <div class="editor-header">
           <div class="editor-title-row">
             <div>
-              <div class="editor-title"><span id="ed-title">Bufón Fortuna Deluxe 96</span> <span id="ed-status-pill" class="pill pill-sched">Scheduled</span><span id="ed-tag-pill" class="pill pill-tag">Upcoming</span></div>
+              <div class="editor-title"><span id="ed-title">Bufón Fortuna Deluxe 96</span> <span id="ed-status-pill" class="pill pill-sched">Scheduled</span><span id="ed-tag-pill" class="pill pill-tag">Upcoming</span> <span id="ed-publish-state" style="background:#fef3c7; color:#92400e; font-size:11px; padding:3px 9px; border-radius:10px; font-weight:700; margin-left:4px;" title="Has unpublished changes since last live publish">✏ Draft changes</span></div>
               <div class="editor-meta" id="ed-meta">Ruby Play · J Mania® S07 · Game ID: rp_216 · Scheduled for Jun 18, 2026 · last edited 2h ago by avi@</div>
+              <div style="margin-top:8px; font-size:11px; color:var(--slate-500); display:flex; gap:14px;">
+                <span>📡 <b>Live version:</b> <span style="color:var(--slate-700);">Bufón Fortuna Deluxe 96 v3</span> · published <b>2 days ago</b></span>
+                <span>✏ <b>Staging:</b> <span style="color:var(--amber);">3 unpublished edits</span></span>
+                <span class="link" style="color:var(--red); cursor:pointer; font-weight:600;" onclick="toast('Showing diff between live and staging','info')">View diff →</span>
+              </div>
             </div>
             <div class="editor-actions">
-              <button class="btn btn-ghost" onclick="openModal('preview')">↗ Preview on site</button>
+              <button class="btn btn-ghost" onclick="openModal('preview')">↗ Preview</button>
               <button class="btn btn-ghost" onclick="openModal('moreActions')">⋯</button>
-              <button class="btn btn-ghost" onclick="toast('Draft saved','success')">Save draft</button>
-              <button class="btn btn-primary" onclick="publishGame()">Save & publish</button>
+              <button class="btn btn-ghost" onclick="toast('Saved to staging — preview at the Live site preview view','success')">💾 Save</button>
+              <button class="btn btn-primary" onclick="publishSingleGame()" style="background:var(--red);">🌐 Publish to live</button>
             </div>
           </div>
         </div>
@@ -1580,13 +1585,26 @@
       <!-- LIVE SITE PREVIEW -->
       <section class="view" id="view-site-preview">
         <div class="page-header-row">
-          <div><h1 class="page-title">Live site preview</h1><p class="page-sub">Browse the public site as a visitor would. Switch studios via the tab bar — switch pages via the studio nav.</p></div>
-          <div class="actions">
-            <span style="font-size:11px; color:var(--slate-500); margin-right:8px;">Device:</span>
-            <button id="sitePvDesktop" class="btn btn-ghost btn-sm" style="background:var(--slate-100);" onclick="setSitePreviewDevice('desktop')">🖥 Desktop</button>
-            <button id="sitePvMobile" class="btn btn-ghost btn-sm" onclick="setSitePreviewDevice('mobile')">📱 Mobile</button>
-            <button class="btn btn-ghost" onclick="toast('Opened rubyplay.com in new tab','info')">↗ Open</button>
+          <div><h1 class="page-title">Live site preview</h1><p class="page-sub">This is your staging environment — changes appear here before going live. Browse as a visitor, then publish from here.</p></div>
+          <div class="actions" style="flex-wrap:wrap; gap:8px; justify-content:flex-end; max-width:60%;">
+            <button class="btn btn-ghost btn-sm" onclick="openModal('whatsChanged')" style="border-color:var(--amber); color:var(--amber); position:relative;">📊 What's changed <span style="background:var(--amber); color:white; border-radius:10px; padding:1px 7px; margin-left:4px; font-size:11px; font-weight:700;">6</span></button>
+            <button class="btn btn-ghost btn-sm" onclick="openModal('schedulePublish')">⏰ Schedule</button>
+            <button class="btn btn-ghost btn-sm" onclick="openModal('sharePreview')">🔗 Share preview</button>
+            <button class="btn btn-primary btn-sm" onclick="openModal('publishConfirm')" style="background:var(--red); color:white; font-weight:700;">🌐 Publish 6 changes to live</button>
+            <span style="width:1px; background:var(--slate-200); margin:0 4px;"></span>
+            <span style="font-size:11px; color:var(--slate-500);">Device:</span>
+            <button id="sitePvDesktop" class="btn btn-ghost btn-sm" style="background:var(--slate-100);" onclick="setSitePreviewDevice('desktop')">🖥</button>
+            <button id="sitePvMobile" class="btn btn-ghost btn-sm" onclick="setSitePreviewDevice('mobile')">📱</button>
+            <button class="btn btn-ghost btn-sm" onclick="toast('Opened rubyplay.com (live version) in new tab','info')" title="Open live site">↗</button>
           </div>
+        </div>
+        <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:10px 16px; margin-bottom:14px; display:flex; align-items:center; gap:12px; font-size:13px;">
+          <span style="font-size:18px;">⚠️</span>
+          <div style="flex:1;">
+            <b style="color:var(--amber);">6 changes pending publish</b>
+            <span style="color:var(--slate-600);"> — what you see below is your staging preview, not the live site yet. <span style="color:var(--red); cursor:pointer; font-weight:600;" onclick="openModal('whatsChanged')">See what's changed →</span></span>
+          </div>
+          <span style="font-size:11px; color:var(--slate-500);">Last published: <b>2 days ago</b></span>
         </div>
 
         <!-- Studio Tab Bar -->
@@ -2021,6 +2039,220 @@
   .perm-row { display:flex; align-items:center; justify-content:space-between; padding:6px 0; font-size:12px; color:var(--slate-700); border-bottom:1px dashed var(--slate-200); }
   .perm-row:last-child { border-bottom:none; }
 </style>
+
+<!-- WHAT'S CHANGED PANEL -->
+<div class="modal-overlay" id="modal-whatsChanged">
+  <div class="modal modal-lg" style="max-height:90vh;">
+    <div class="modal-h" style="position:sticky;top:0;background:white;z-index:5;">
+      <h3>📊 Pending changes (6)</h3>
+      <span style="margin-left:auto; font-size:11px; color:var(--slate-500); margin-right:14px;">Edits saved to staging — not yet on rubyplay.com</span>
+      <span class="close" onclick="closeModal()">×</span>
+    </div>
+    <div class="modal-body" style="max-height:70vh; overflow-y:auto;">
+      <p style="font-size:12px; color:var(--slate-500); margin-bottom:14px;">Uncheck any items you don't want to publish in this batch. Last published: <b>2 days ago by avi@</b>.</p>
+
+      <div style="font-size:11px; text-transform:uppercase; color:var(--slate-500); font-weight:600; padding:8px 0; border-bottom:1px solid var(--slate-200); margin-bottom:6px;">Games (3)</div>
+
+      <div style="background:#f8fafc; border:1px solid var(--slate-200); border-radius:8px; padding:12px; margin-bottom:6px; display:flex; align-items:center; gap:12px;">
+        <input type="checkbox" checked style="width:16px;height:16px;">
+        <div class="game-thumb" style="background:linear-gradient(135deg,#dc2626,#7c2d12);"></div>
+        <div style="flex:1;">
+          <div style="font-weight:700; font-size:13px;">Bufón Fortuna Deluxe 96 <span style="font-size:11px; color:var(--slate-400); font-weight:400;">· rp_216</span></div>
+          <div style="font-size:11px; color:var(--slate-500);">Tagline + Description + Hero image updated · 2h ago by avi@</div>
+        </div>
+        <span style="font-size:11px; color:var(--amber); font-weight:700;">✏ Modified</span>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal(); openGame('rp_216')">Open →</button>
+      </div>
+
+      <div style="background:#f8fafc; border:1px solid var(--slate-200); border-radius:8px; padding:12px; margin-bottom:6px; display:flex; align-items:center; gap:12px;">
+        <input type="checkbox" checked style="width:16px;height:16px;">
+        <div class="game-thumb" style="background:linear-gradient(135deg,#f59e0b,#78350f);"></div>
+        <div style="flex:1;">
+          <div style="font-weight:700; font-size:13px;">Mad Hit Diamonds Deluxe 96 <span style="font-size:11px; color:var(--slate-400); font-weight:400;">· rp_211</span></div>
+          <div style="font-size:11px; color:var(--slate-500);">4 features updated · Release date moved to Jun 11 · 4h ago by avi@</div>
+        </div>
+        <span style="font-size:11px; color:var(--amber); font-weight:700;">✏ Modified</span>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal(); openGame('rp_211')">Open →</button>
+      </div>
+
+      <div style="background:#f8fafc; border:1px solid #bbf7d0; border-radius:8px; padding:12px; margin-bottom:6px; display:flex; align-items:center; gap:12px;">
+        <input type="checkbox" checked style="width:16px;height:16px;">
+        <div class="game-thumb" style="background:linear-gradient(135deg,#f59e0b,#b91c1c);"></div>
+        <div style="flex:1;">
+          <div style="font-weight:700; font-size:13px;">Sweet Crowns <span style="font-size:11px; color:var(--slate-400); font-weight:400;">· sc_15002</span></div>
+          <div style="font-size:11px; color:var(--slate-500);">New game · never published before · 5h ago by daniel@</div>
+        </div>
+        <span style="font-size:11px; color:var(--green); font-weight:700;">🆕 New</span>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal(); openGame('sc_15002')">Open →</button>
+      </div>
+
+      <div style="font-size:11px; text-transform:uppercase; color:var(--slate-500); font-weight:600; padding:8px 0; border-bottom:1px solid var(--slate-200); margin:14px 0 6px;">Studios (1)</div>
+
+      <div style="background:#f8fafc; border:1px solid var(--slate-200); border-radius:8px; padding:12px; margin-bottom:6px; display:flex; align-items:center; gap:12px;">
+        <input type="checkbox" checked style="width:16px;height:16px;">
+        <div style="width:36px; height:36px; background:linear-gradient(135deg,#16a34a,#052e16); border-radius:6px; display:flex; align-items:center; justify-content:center; color:white;">♛</div>
+        <div style="flex:1;">
+          <div style="font-weight:700; font-size:13px;">Spincraft</div>
+          <div style="font-size:11px; color:var(--slate-500);">Hero title + Director quote updated · 1d ago by daniel@</div>
+        </div>
+        <span style="font-size:11px; color:var(--amber); font-weight:700;">✏ Modified</span>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal(); openStudio('spincraft')">Open →</button>
+      </div>
+
+      <div style="font-size:11px; text-transform:uppercase; color:var(--slate-500); font-weight:600; padding:8px 0; border-bottom:1px solid var(--slate-200); margin:14px 0 6px;">Pages (2)</div>
+
+      <div style="background:#f8fafc; border:1px solid var(--slate-200); border-radius:8px; padding:12px; margin-bottom:6px; display:flex; align-items:center; gap:12px;">
+        <input type="checkbox" checked style="width:16px;height:16px;">
+        <div style="width:36px; height:36px; background:var(--slate-100); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:16px;">ℹ</div>
+        <div style="flex:1;">
+          <div style="font-weight:700; font-size:13px;">About Us <span style="font-size:11px; color:var(--slate-400); font-weight:400;">· rubyplay.com/about</span></div>
+          <div style="font-size:11px; color:var(--slate-500);">Body content updated · 1 week ago by avi@</div>
+        </div>
+        <span style="font-size:11px; color:var(--amber); font-weight:700;">✏ Modified</span>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal(); openStaticPage('group-about')">Open →</button>
+      </div>
+
+      <div style="background:#f8fafc; border:1px solid var(--slate-200); border-radius:8px; padding:12px; margin-bottom:6px; display:flex; align-items:center; gap:12px;">
+        <input type="checkbox" checked style="width:16px;height:16px;">
+        <div style="width:36px; height:36px; background:var(--slate-100); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:16px;">🔒</div>
+        <div style="flex:1;">
+          <div style="font-weight:700; font-size:13px;">Privacy Policy <span style="font-size:11px; color:var(--slate-400); font-weight:400;">· rubyplay.com/privacy</span></div>
+          <div style="font-size:11px; color:var(--slate-500);">GDPR section added · 3 days ago by legal@</div>
+        </div>
+        <span style="font-size:11px; color:var(--amber); font-weight:700;">✏ Modified</span>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal(); openStaticPage('group-privacy')">Open →</button>
+      </div>
+
+      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:14px; margin-top:14px; font-size:12px; color:var(--slate-700);">
+        <b style="color:var(--blue);">💡 Tip:</b> You can <b>publish individually</b> from each record's editor (each has its own "Publish to live" button), or <b>batch them together</b> here for coordinated releases (e.g. new game + matching news post on the same day).
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-ghost" onclick="closeModal(); openModal('sharePreview')">🔗 Share preview first</button>
+      <button class="btn btn-ghost" onclick="closeModal(); openModal('schedulePublish')">⏰ Schedule…</button>
+      <button class="btn btn-primary" onclick="closeModal(); openModal('publishConfirm')" style="background:var(--red);">🌐 Publish selected (6)</button>
+    </div>
+  </div>
+</div>
+
+<!-- PUBLISH CONFIRMATION -->
+<div class="modal-overlay" id="modal-publishConfirm">
+  <div class="modal">
+    <div class="modal-h"><h3>Publish 6 changes to rubyplay.com?</h3><span class="close" onclick="closeModal()">×</span></div>
+    <div class="modal-body">
+      <p style="font-size:13px; color:var(--slate-700); margin-bottom:14px;">This will push the selected changes to the <b>live site at rubyplay.com</b>. Visitors will see updates within ~30 seconds (CDN cache invalidation).</p>
+
+      <div style="background:#f8fafc; border:1px solid var(--slate-200); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; color:var(--slate-500); font-weight:600; margin-bottom:8px;">Publishing</div>
+        <div style="font-size:13px; line-height:1.7;">
+          ✏ <b>Bufón Fortuna Deluxe 96</b> — tagline, description, hero image<br>
+          ✏ <b>Mad Hit Diamonds Deluxe 96</b> — features, release date<br>
+          🆕 <b>Sweet Crowns</b> — new game (first publish)<br>
+          ✏ <b>Spincraft</b> studio — homepage content<br>
+          ✏ <b>About Us</b> page — body content<br>
+          ✏ <b>Privacy Policy</b> page — GDPR section
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div><label class="field-label">Add a publish note (optional, for audit log)</label><textarea class="field-textarea" rows="2" placeholder="e.g. June 4 release wave + privacy update"></textarea></div>
+      </div>
+
+      <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:6px; padding:10px 14px; font-size:12px; color:var(--slate-700);">
+        ⚠️ <b>Tip:</b> Once published, these changes are live. If you need to revert, use the Version history on each record (or contact engineering for a rollback).
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="publishToLive()" style="background:var(--red);">🌐 Publish to rubyplay.com now</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCHEDULE PUBLISH -->
+<div class="modal-overlay" id="modal-schedulePublish">
+  <div class="modal">
+    <div class="modal-h"><h3>⏰ Schedule publish</h3><span class="close" onclick="closeModal()">×</span></div>
+    <div class="modal-body">
+      <p style="font-size:13px; color:var(--slate-700); margin-bottom:14px;">Auto-publish your pending changes at a specific date and time. Great for coordinated launches.</p>
+
+      <div class="form-row form-row-2">
+        <div><label class="field-label">Date</label><input class="field-input" type="date" value="2026-06-04"></div>
+        <div><label class="field-label">Time (UTC)</label><input class="field-input" type="time" value="09:00"></div>
+      </div>
+
+      <div class="form-row">
+        <div><label class="field-label">Time zone</label><select class="field-select"><option>UTC (recommended for global launches)</option><option>America/New_York (EST/EDT)</option><option>Europe/Malta (CET/CEST)</option><option>America/Sao_Paulo (BRT)</option></select></div>
+      </div>
+
+      <div class="form-row">
+        <div><label class="field-label">Items to publish</label><select class="field-select"><option>All 6 pending changes</option><option>Just the 3 games</option><option>Just the studio + pages</option></select></div>
+      </div>
+
+      <div class="form-row form-row-2">
+        <div><label class="field-label">Notify when published?</label><div class="yn-toggle"><button class="active yes" onclick="ynToggle(this)">Yes</button><button onclick="ynToggle(this)">No</button></div></div>
+        <div><label class="field-label">Slack alert to #releases?</label><div class="yn-toggle"><button class="active yes" onclick="ynToggle(this)">Yes</button><button onclick="ynToggle(this)">No</button></div></div>
+      </div>
+
+      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:10px 14px; font-size:12px; color:var(--slate-700);">
+        📅 <b>Will publish:</b> June 4, 2026 at 09:00 UTC (12:00 in Malta · 05:00 in New York · 06:00 in São Paulo).
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal(); toast('Publish scheduled for Jun 4, 2026 09:00 UTC','success')">⏰ Schedule publish</button>
+    </div>
+  </div>
+</div>
+
+<!-- SHARE PREVIEW LINK -->
+<div class="modal-overlay" id="modal-sharePreview">
+  <div class="modal">
+    <div class="modal-h"><h3>🔗 Share preview link</h3><span class="close" onclick="closeModal()">×</span></div>
+    <div class="modal-body">
+      <p style="font-size:13px; color:var(--slate-700); margin-bottom:14px;">Generate a temporary link to the staging preview. Anyone with the link can review the unpublished changes — no login required.</p>
+
+      <div style="background:#f8fafc; border:1px solid var(--slate-200); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <div style="font-size:11px; text-transform:uppercase; color:var(--slate-500); font-weight:600; margin-bottom:8px;">Preview URL</div>
+        <div style="display:flex; gap:6px;">
+          <input class="field-input" value="https://preview.rubyplay.com/r/k8Hx2pQ9mNt" readonly style="font-family:monospace; font-size:12px; background:white;">
+          <button class="btn btn-primary btn-sm" onclick="toast('Copied to clipboard','success')" style="white-space:nowrap;">📋 Copy</button>
+        </div>
+      </div>
+
+      <div class="form-row form-row-2">
+        <div><label class="field-label">Expires in</label><select class="field-select"><option>7 days (recommended)</option><option>24 hours</option><option>30 days</option><option>Never</option></select></div>
+        <div><label class="field-label">Password protect?</label><div class="yn-toggle"><button onclick="ynToggle(this)">Yes</button><button class="active no" onclick="ynToggle(this)">No</button></div></div>
+      </div>
+
+      <div class="form-row">
+        <div><label class="field-label">What's visible?</label><select class="field-select"><option>All 6 pending changes (staging preview)</option><option>Only this game (Bufón Fortuna)</option><option>Whole staging site</option></select></div>
+      </div>
+
+      <div style="font-size:11px; text-transform:uppercase; color:var(--slate-500); font-weight:600; padding:8px 0; border-bottom:1px solid var(--slate-200); margin:14px 0 8px;">Active preview links</div>
+
+      <div style="background:#f8fafc; border:1px solid var(--slate-200); border-radius:6px; padding:10px 12px; margin-bottom:6px; display:flex; align-items:center; gap:10px; font-size:12px;">
+        <span style="font-family:monospace; flex:1; color:var(--slate-700);">preview.rubyplay.com/r/Mw8...</span>
+        <span style="color:var(--slate-500);">Bufón only · 2 views · expires in 5d</span>
+        <button class="btn btn-ghost btn-sm" onclick="toast('Link revoked','info')">Revoke</button>
+      </div>
+      <div style="background:#f8fafc; border:1px solid var(--slate-200); border-radius:6px; padding:10px 12px; margin-bottom:6px; display:flex; align-items:center; gap:10px; font-size:12px;">
+        <span style="font-family:monospace; flex:1; color:var(--slate-700);">preview.rubyplay.com/r/Tz4...</span>
+        <span style="color:var(--slate-500);">Full site · 18 views · expires in 12h</span>
+        <button class="btn btn-ghost btn-sm" onclick="toast('Link revoked','info')">Revoke</button>
+      </div>
+
+      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:10px 14px; font-size:12px; color:var(--slate-700); margin-top:14px;">
+        🔒 <b>Tip:</b> Preview links don't expose admin features — recipients can only browse, not edit. They also don't get indexed by search engines.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal(); toast('Preview link created & copied','success')">🔗 Create link</button>
+    </div>
+  </div>
+</div>
 
 <div class="modal-overlay" id="modal-pagePreview">
   <div class="modal modal-xl" style="max-height:94vh; max-width:1100px;">
@@ -2511,6 +2743,33 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal
 
 // Specific actions
 function publishGame() { toast('Publishing…','info'); setTimeout(()=>toast('Wrath of Olympus published live on rubyplay.com','success'), 700); }
+
+function publishSingleGame() {
+  var name = (window.currentGameId && gamesData[window.currentGameId]) ? gamesData[window.currentGameId].name : 'this game';
+  toast('Publishing '+name+' to rubyplay.com…','info');
+  setTimeout(function(){
+    toast(name+' is now live on rubyplay.com (CDN propagating ~30s)','success');
+    var badge = document.getElementById('ed-publish-state');
+    if (badge) { badge.textContent = '✓ Live'; badge.style.background = '#dcfce7'; badge.style.color = '#166534'; }
+  }, 900);
+}
+
+function publishToLive() {
+  closeModal();
+  toast('Publishing 6 changes to rubyplay.com…','info');
+  setTimeout(function(){ toast('Step 1/3: Saving snapshots to production DB','info'); }, 400);
+  setTimeout(function(){ toast('Step 2/3: Invalidating CDN cache','info'); }, 1200);
+  setTimeout(function(){
+    toast('✓ All 6 changes published live on rubyplay.com','success');
+    // Update the staging banner + button counts to "site up to date"
+    var pendingBtn = document.querySelector('#view-site-preview .actions button[onclick*="whatsChanged"]');
+    if (pendingBtn) pendingBtn.innerHTML = '✓ Site up to date';
+    var publishBtn = document.querySelector('#view-site-preview .actions button[onclick*="publishConfirm"]');
+    if (publishBtn) { publishBtn.innerHTML = '✓ Nothing to publish'; publishBtn.disabled = true; publishBtn.style.background = 'var(--slate-200)'; publishBtn.style.color = 'var(--slate-500)'; }
+    var banner = document.querySelector('#view-site-preview > div:nth-of-type(2)');
+    if (banner) banner.style.display = 'none';
+  }, 2200);
+}
 function approveSubmission(btn, name) { var row = btn.closest('.review-row'); row.style.transition='all 0.3s'; row.style.opacity=0; row.style.transform='translateX(40px)'; setTimeout(()=>row.remove(), 300); toast(name+' approved & published','success'); }
 function setVol(el) { document.querySelectorAll('.vol-step').forEach(s=>s.classList.remove('active')); el.classList.add('active'); toast('Volatility set to '+el.textContent.trim(),'info'); }
 function ynToggle(btn) { var siblings = btn.parentNode.querySelectorAll('button'); siblings.forEach(b=>b.classList.remove('active','yes','no')); btn.classList.add('active'); btn.classList.add(btn.textContent.trim().toLowerCase()==='yes'?'yes':'no'); }
