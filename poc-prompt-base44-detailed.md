@@ -48,12 +48,11 @@ PUBLIC SITE
 - Footer
 - Live site preview
 
-WORKFLOW
-- Review queue (with red badge showing pending count, e.g. "7")
-
 ADMIN
 - Users & roles
 - Settings
+
+NOTE: There is NO "Workflow" section and NO "Review queue" sidebar item. Review/approval is part of the Live Site Preview's Pending Changes panel (see PUBLISH WORKFLOW below).
 
 Bottom of sidebar: user avatar (initials in colored circle) + name + role label, clickable to open user menu (My profile / Preferences / Audit log / Sign out).
 
@@ -1174,24 +1173,279 @@ ACCEPTANCE TESTS FOR TRANSLATION ENGINE:
 ✅ HTML <b> tags in description are preserved in translations
 
 ═══════════════════════════════════════════════════════════════════
-PHASE 17: REVIEW QUEUE (id: view-review)
+PUBLISH WORKFLOW (cross-cutting — applies to every editable record)
 ═══════════════════════════════════════════════════════════════════
 
-Header: "Review queue" + subtitle "7 submissions waiting for HQ approval before publishing."
-Top right: [Filter ▾]
+🚨 CRITICAL ARCHITECTURE: Every save in the admin goes to STAGING. There is no per-editor "Publish to live" button. The ONLY way to push changes to the production site (rubyplay.com) is from the Live Site Preview view's central publish button. The Review queue is MERGED into this same flow — no separate sidebar item.
 
-5 submission rows. Each row: thumbnail + game name + "Submitted by [submitter] · [studio] · [time ago]" + Completeness bar (140px wide, label "Completeness · NN%", green/amber/red fill) + actions [Review] [Approve & publish] OR [Request changes].
+This is a two-stage workflow with built-in approval gating:
+1. User edits a record → Save to preview (lands in staging + the Pending Changes queue)
+2. HQ reviews everything in the Pending Changes panel (in Live Site Preview)
+3. HQ clicks Publish → only the approved items go live
 
-5 seed rows:
-1. Voltage Blitz King Ra 96 — Koala Games · kg_5045 · Maya Chen 3h ago — 95% (green) — [Review] [Approve & publish]
-2. Coelho Jitsu 96 — Koala Games · kg_5055 · Maya Chen 5h ago — 100% (green) — [Review] [Approve & publish]
-3. BetWarrior Goalinko 96 — Mad Hat · mh_10007 · Tom Müller 4h ago — 88% (green) — [Review] [Request changes]
-4. Sweet Crowns — Spincraft · sc_15002 · Daniel Cohen 1d ago — 72% (amber) — [Review] [Request changes]
-5. Voltage Blitz Lucky Wukong 96 — Koala Games · kg_5570 · Maya Chen 2d ago — 78% (amber) — [Review] [Request changes]
+DATA MODEL — every editable record needs:
 
-Click [Review] → opens that specific game's editor.
-Click [Approve & publish] → row animates out + toast "Game name approved & published".
-Click [Request changes] → opens Request Changes modal (textarea + Send button; submitter gets notified).
+Use Base44's data model to add to games, studios, news_posts, static_pages:
+- draft_data (JSON) — the staging state (what's being edited)
+- published_data (JSON) — the live state (what visitors see on rubyplay.com); null if never published
+- has_pending_changes (computed: draft_data != published_data)
+- published_at (timestamp; null = never published)
+- published_by (user_id)
+- last_edited_at (timestamp)
+- last_edited_by (user_id)
+- source_hash (hash of draft_data for drift detection between languages)
+
+Plus a separate pending_changes table/collection that tracks all items awaiting publish:
+- id, record_type ('game'/'studio'/'news'/'static_page'/'config')
+- record_id (FK to the record)
+- review_state ('auto_approved' | 'needs_review' | 'approved' | 'rejected')
+- submitted_by (user_id)
+- submitted_at (timestamp)
+- approved_by (user_id, nullable)
+- approved_at (timestamp, nullable)
+- rejected_reason (text, nullable)
+- completeness_percent (int, 0-100)
+- detail (short description of what changed, e.g. "Tagline + Description + Hero image updated")
+
+And a publish_events table for the audit trail:
+- id, published_at, published_by
+- changeset_ids (array of pending_change ids that were published)
+- note (optional, user-supplied)
+- status ('pending' | 'in_progress' | 'success' | 'failed' | 'rolled_back')
+
+SAVE BEHAVIOR PER ROLE:
+
+When a user clicks "✓ Save to preview" in any editor:
+1. Write form values to draft_data column on that record
+2. Compute review_state based on user's role:
+   - HQ Admin or HQ Editor → review_state = 'auto_approved'
+   - Studio Lead or Contributor → review_state = 'needs_review'
+3. Upsert a row in pending_changes with submitter info + completeness
+4. Toast: "✓ Saved to preview — review at Live site preview, then publish from there"
+5. Update editor header badge → "✏ Draft changes (saved)"
+
+THE LIVE SITE PREVIEW VIEW — the publishing hub:
+
+Top bar buttons (right side):
+- 📊 What's changed (N) — N is total pending count; shows ⏳ K badge in amber when K items need HQ review
+- ⏰ Schedule
+- 🔗 Share preview
+- 🌐 Publish M changes to live — M is publishable count (auto_approved + approved only, NOT needs_review)
+- 🖥 Desktop / 📱 Mobile / ↗ Open buttons
+
+Yellow warning banner below header:
+- "11 changes pending · 5 need HQ review"
+- "Last published: 2 days ago by avi@"
+- Inline link "See what's changed →" opens the panel
+
+WHAT'S CHANGED PANEL — the unified queue:
+
+Title: "📊 Pending changes (N)" — N updates live
+Subtitle: "Edits saved to staging — not yet on rubyplay.com"
+
+FILTER CHIPS (top of panel):
+- State: All (N) · ⏳ Needs HQ review (K) · ✓ Ready to publish (M)
+- Submitter: All / HQ Admin / HQ Editor / Studio Lead / Contributor — only show roles that have items
+
+Below: list of pending items, grouped by record type with section headers:
+- Games (G) · Studios (S) · Pages (P) · News posts (N) · Site config (C) · Translations (T)
+
+Each row:
+- Checkbox (checked by default if approved/auto_approved; disabled if needs_review)
+- Thumbnail (game thumb gradient, or icon for studios/pages)
+- Record name + meta (e.g. "Bufón Fortuna Deluxe 96 · rp_216")
+- Detail line (what changed: "Tagline + Description + Hero image updated")
+- Submitter info row: avatar (initials) + name + role + studio + time ago
+- Right column: flag badge (🆕 New / ✏ Modified) + review state badge:
+  - ⏳ Needs HQ review (amber background)
+  - ✓ HQ save · auto-approved (blue background)
+  - ✓ Approved by HQ (green background)
+- Completeness bar (only when from non-HQ submitter): width % matches completeness
+- Action buttons (different per state):
+  - For needs_review items: [Review] [✓ Approve] (green) [↩ Reject]
+  - For approved/auto_approved items: [Open →] [×]
+
+Items needing review get an amber border + light yellow background (visually distinct).
+
+Bottom info banner:
+"💡 How this works: Every save lands here. HQ saves are auto-approved and ready to publish. Studio Lead / Contributor saves need HQ approval first. Only approved items get published when you click Publish."
+
+Footer:
+- [Cancel] [🔗 Share preview first] [⏰ Schedule…] [🌐 Publish selected (M)]
+- "M" matches the publishable count (NOT total)
+- If M = 0 and N > 0: button reads "⚠ Approve submissions first" (disabled)
+- If N = 0: button reads "✓ Nothing to publish" (disabled)
+
+APPROVE ACTION:
+When HQ clicks ✓ Approve on a needs_review item:
+1. Update pending_changes.review_state = 'approved'
+2. Set approved_by + approved_at
+3. Item flips from amber border → green badge "✓ Approved by HQ"
+4. Checkbox becomes enabled + checked by default
+5. Publishable count increments
+6. Toast: "✓ '<name>' approved · ready for next publish"
+
+REJECT ACTION (with feedback):
+Click ↩ Reject → opens a small modal:
+- Title: "Reject submission"
+- Body: "The submitter will be notified by email and in-app. The item will be removed from the publish queue (still saved as a draft they can revise)."
+- Textarea: "What needs to change? (optional)"
+- Button: [↩ Reject & notify submitter]
+
+On confirm:
+1. pending_changes.review_state = 'rejected'
+2. Store rejected_reason
+3. Send notification to submitter (email + in-app bell)
+4. Remove from pendingChanges UI
+5. The submitter sees the rejection in their notifications + the editor for that record shows the feedback at top
+6. They can revise + Save to preview again → new pending_change row
+
+PUBLISH CONFIRMATION MODAL:
+Title: "Publish N changes to rubyplay.com?" (N = publishable count)
+- Lists all approved/auto_approved items with type-icon + name + detail
+- "Add a publish note (optional, for audit log)" textarea
+- ⚠ Tip: "Once published, these changes are live. If you need to revert, use the Version history on each record."
+- Footer: [Cancel] [🌐 Publish to rubyplay.com now]
+
+ON PUBLISH (the actual flow):
+1. Create a row in publish_events with status='in_progress'
+2. For each approved pending_change:
+   - Copy record.draft_data → record.published_data
+   - Set record.published_at = now(), published_by = current_user
+   - Mark pending_change as published (delete from queue or flag)
+3. Invalidate CDN cache for all affected URLs (via Base44's CDN management or hook)
+4. Update publish_events.status = 'success'
+5. Show toast progression:
+   - "Publishing N changes to rubyplay.com…"
+   - "Step 1/3: Saving snapshots to production DB"
+   - "Step 2/3: Invalidating CDN cache"
+   - "✓ N changes published live on rubyplay.com"
+6. needs_review items REMAIN in the queue (they weren't published)
+
+SCHEDULE PUBLISH MODAL:
+- Date + Time picker
+- Time zone dropdown (UTC default + America/New_York + Europe/Malta + America/Sao_Paulo)
+- "Items to publish" dropdown: All N changes / Just the M approved / Specific subset
+- "Notify when published?" Y/N
+- "Slack alert to #releases?" Y/N
+- Footer summary: "Will publish: June 4, 2026 at 09:00 UTC (12:00 in Malta · 05:00 in New York)"
+- Creates a row in publish_events with status='scheduled' + scheduled_publish_at timestamp
+- A scheduled job (Base44's task scheduler or cron) fires the publish at the scheduled time
+
+SHARE PREVIEW LINK MODAL:
+Generates a signed URL that anonymous users can use to view the staging preview:
+- URL: https://[your-site]/preview/[signed-token]
+- Token expires in 7 days (configurable)
+- Optional password protection
+- Scope: All pending changes / single record / whole staging site
+- "Active preview links" list at the bottom with Revoke buttons
+- Recipients can browse but cannot edit
+- robots.txt blocks indexing
+
+EDITOR HEADER STATUS BADGE:
+Each record's editor shows its current state:
+- ✓ Live (green) — matches production
+- ✏ Draft changes (amber) — has unpublished edits
+- 🚧 Never published (gray) — exists in staging only
+- ⏰ Scheduled for [date] (blue) — auto-publish queued
+- ⏳ Awaiting HQ review (yellow) — needs_review state
+- ↩ Changes requested (red) — was rejected with feedback
+
+Plus a diff strip below the meta line:
+"📡 Live version: <name> v3 · published 2 days ago | ✏ Staging: 3 unpublished edits | View diff →"
+
+The "View diff" link opens a side-by-side diff modal: live values on left, staging on right, with highlighted changes.
+
+PUBLIC SITE RENDERING RULES:
+
+The public site (rubyplay.com and per-studio domains) reads ONLY from published_data. Never reads draft_data.
+
+For the preview environment (preview.rubyplay.com or signed preview URLs):
+- Reads from draft_data if available
+- Falls back to published_data if no draft
+- Shows a "Staging preview" banner across the top of every page
+- Sets X-Robots-Tag: noindex header to prevent SEO leaks
+
+Per-record rendering shows a staging badge on items that have has_pending_changes = true, visible in:
+- Game cards on Games index
+- Game detail page (full-width banner at top)
+- Studio home pages
+- Studio about / contact pages
+- News index (per-card badge)
+
+PERMISSION GATING (Base44's access control / record-level permissions):
+
+Per the role matrix:
+- HQ Admin: can save (auto-approved), approve, reject, publish, schedule, revoke preview links
+- HQ Editor: can save (auto-approved), approve, reject, publish, schedule (NOT manage users/settings)
+- Studio Lead: can save (needs_review for own studio), can NOT approve their own submissions, can NOT publish, can revoke own preview links
+- Contributor: can save (needs_review for own studio), can NOT approve, can NOT publish
+- Translator: can save translations only (auto_approved within translation scope)
+- Read-only: cannot save at all
+
+The pending_changes INSERT logic auto-sets review_state based on the current user's role.
+
+VERSION HISTORY + ROLLBACK:
+
+Each record has a versions table:
+- record_id, version_number, snapshot (full JSON), published_at, published_by
+
+Every successful publish creates a new version. Editor has a "Version history" sub-menu showing past versions with:
+- "Restore this version" button → copies that snapshot into draft_data, marks as needs_review (so it goes through approval again)
+- "Compare with current" → diff view
+
+AUDIT LOG:
+
+Every save, approve, reject, publish, schedule, rollback writes to an audit_log table:
+- user_id, action, target_record_type, target_record_id, details (JSON), created_at
+- Surfaced in Users & roles → Activity audit tab with filters
+
+NOTIFICATIONS:
+
+When a Studio Lead's submission is approved or rejected, send:
+- Email to submitter (via Base44's email or external service)
+- In-app notification (the bell icon's popover gets a red dot)
+- Slack webhook (if configured in Settings → Integrations)
+
+PUBLISH-RELATED UI BUTTON LABELS (THIS IS IMPORTANT — DO NOT VARY):
+
+Every editor uses these labels — there is NO "Publish" button outside Live Site Preview:
+- Game editor: [↗ Preview] [⋯] [Save draft] [✓ Save to preview] (red primary)
+- Studio detail: [↗ View public page] [⋯] [✓ Save to preview] (red primary)
+- Static page editor: [Cancel] [History] [Save draft] [✓ Save to preview]
+- News post modal: [Cancel] [Save draft] [✓ Save to preview]
+- Group homepage composer: [👁 Preview homepage] [Save draft] [✓ Save to preview]
+- Navigation editor: [✓ Save to preview]
+- Footer editor: [✓ Save to preview]
+- Translation Review: [Cancel] [💾 Save drafts] [✓ Save to preview]
+
+ACCEPTANCE TESTS:
+
+✅ Edit Bufón Fortuna's tagline as Avi (HQ Admin) → click Save to preview → item appears in What's changed as "auto_approved" with blue badge
+✅ Edit a Koala game as Maya (Studio Lead) → click Save to preview → item appears as "needs_review" with amber border + ⏳ pill
+✅ Click ✓ Approve on Maya's submission as Avi → flips to green ✓ Approved, becomes publishable
+✅ Click ↩ Reject on Maya's submission → modal opens → write "Need Buy Feature screenshot" → item removed, Maya gets notification
+✅ Click 🌐 Publish — only publishes approved + auto_approved items; needs_review items stay in queue
+✅ As Maya, the editor for her game shows ⏳ Awaiting HQ review badge after she saves
+✅ As Maya, the "Save to preview" button is the ONLY save option; no Publish button is visible
+✅ Visit rubyplay.com/games/[slug] (public site) → shows the last-PUBLISHED tagline, not the current draft tagline
+✅ Visit preview.rubyplay.com/r/[signed-token] → shows the current DRAFT version with staging banner
+✅ As HQ, the dashboard shows a "Pending publish" stat tile with the total pending count (auto + needs_review)
+✅ Approving 3 items, rejecting 1, then publishing → 3 records get new published_data; 1 record is removed from queue; needs_review items remain
+✅ Schedule publish for tomorrow 9am UTC → background job fires → items go live → notifications sent
+✅ Restore a previous version of a record → it enters the queue as needs_review (treated as a new edit)
+✅ The Review queue sidebar item DOES NOT exist (it was merged into this workflow)
+✅ Activity audit log shows: Avi published 3 items · Maya submitted 1 game · Avi approved Voltage Blitz King Ra · etc.
+
+═══════════════════════════════════════════════════════════════════
+PHASE 17: REVIEW QUEUE (id: view-review) — DEPRECATED / REMOVED
+═══════════════════════════════════════════════════════════════════
+
+DO NOT BUILD a separate Review queue view. The review approval workflow is folded into the Pending Changes panel inside Live Site Preview (described above in PUBLISH WORKFLOW). The sidebar item "Review queue" does NOT exist in the final design.
+
+If you've already started building a Review queue view, delete it and merge its items into the pending_changes flow.
+
+The 5 historical submissions (Voltage Blitz King Ra 96, Coelho Jitsu 96, BetWarrior Goalinko 96, Sweet Crowns, Voltage Blitz Lucky Wukong 96) should now be seeded into pending_changes with review_state='needs_review' and the appropriate submitter/completeness data — they appear in the Pending Changes panel, not in a separate Review queue.
 
 ═══════════════════════════════════════════════════════════════════
 PHASE 18: USERS & ROLES (id: view-users) — WITH 4 TABS
