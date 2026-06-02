@@ -1591,7 +1591,7 @@
             <button class="btn btn-ghost btn-sm" onclick="renderWhatsChanged(); openModal('whatsChanged');" style="border-color:var(--amber); color:var(--amber); position:relative;">📊 What's changed <span style="background:var(--amber); color:white; border-radius:10px; padding:1px 7px; margin-left:4px; font-size:11px; font-weight:700;">6</span></button>
             <button class="btn btn-ghost btn-sm" onclick="openModal('schedulePublish')">⏰ Schedule</button>
             <button class="btn btn-ghost btn-sm" onclick="openModal('sharePreview')">🔗 Share preview</button>
-            <button class="btn btn-primary btn-sm" onclick="openModal('publishConfirm')" style="background:var(--red); color:white; font-weight:700;">🌐 Publish 6 changes to live</button>
+            <button class="btn btn-primary btn-sm" onclick="renderPublishConfirm(); openModal('publishConfirm');" style="background:var(--red); color:white; font-weight:700;">🌐 Publish 6 changes to live</button>
             <span style="width:1px; background:var(--slate-200); margin:0 4px;"></span>
             <span style="font-size:11px; color:var(--slate-500);">Device:</span>
             <button id="sitePvDesktop" class="btn btn-ghost btn-sm" style="background:var(--slate-100);" onclick="setSitePreviewDevice('desktop')">🖥</button>
@@ -2132,7 +2132,7 @@
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
       <button class="btn btn-ghost" onclick="closeModal(); openModal('sharePreview')">🔗 Share preview first</button>
       <button class="btn btn-ghost" onclick="closeModal(); openModal('schedulePublish')">⏰ Schedule…</button>
-      <button class="btn btn-primary" id="whatsChangedPublishBtn" onclick="closeModal(); openModal('publishConfirm')" style="background:var(--red);">🌐 Publish selected (6)</button>
+      <button class="btn btn-primary" id="whatsChangedPublishBtn" onclick="closeModal(); renderPublishConfirm(); openModal('publishConfirm');" style="background:var(--red);">🌐 Publish selected (6)</button>
     </div>
   </div>
 </div>
@@ -2140,19 +2140,14 @@
 <!-- PUBLISH CONFIRMATION -->
 <div class="modal-overlay" id="modal-publishConfirm">
   <div class="modal">
-    <div class="modal-h"><h3>Publish 6 changes to rubyplay.com?</h3><span class="close" onclick="closeModal()">×</span></div>
+    <div class="modal-h"><h3 id="publishConfirmTitle">Publish 6 changes to rubyplay.com?</h3><span class="close" onclick="closeModal()">×</span></div>
     <div class="modal-body">
       <p style="font-size:13px; color:var(--slate-700); margin-bottom:14px;">This will push the selected changes to the <b>live site at rubyplay.com</b>. Visitors will see updates within ~30 seconds (CDN cache invalidation).</p>
 
       <div style="background:#f8fafc; border:1px solid var(--slate-200); border-radius:8px; padding:14px; margin-bottom:14px;">
         <div style="font-size:11px; text-transform:uppercase; color:var(--slate-500); font-weight:600; margin-bottom:8px;">Publishing</div>
-        <div style="font-size:13px; line-height:1.7;">
-          ✏ <b>Bufón Fortuna Deluxe 96</b> — tagline, description, hero image<br>
-          ✏ <b>Mad Hit Diamonds Deluxe 96</b> — features, release date<br>
-          🆕 <b>Sweet Crowns</b> — new game (first publish)<br>
-          ✏ <b>Spincraft</b> studio — homepage content<br>
-          ✏ <b>About Us</b> page — body content<br>
-          ✏ <b>Privacy Policy</b> page — GDPR section
+        <div id="publishConfirmList" style="font-size:13px; line-height:1.7;">
+          <!-- populated by JS -->
         </div>
       </div>
 
@@ -2166,7 +2161,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="publishToLive()" style="background:var(--red);">🌐 Publish to rubyplay.com now</button>
+      <button class="btn btn-primary" id="publishConfirmButton" onclick="publishToLive()" style="background:var(--red);">🌐 Publish to rubyplay.com now</button>
     </div>
   </div>
 </div>
@@ -3063,6 +3058,28 @@ function renderWhatsChanged() {
 function removePending(type, id) {
   pendingChanges = pendingChanges.filter(function(p){ return !(p.type === type && p.id === id); });
   updatePendingUI();
+}
+
+function renderPublishConfirm() {
+  var n = pendingChanges.length;
+  var title = document.getElementById('publishConfirmTitle');
+  if (title) title.textContent = n === 0 ? 'Nothing to publish' : 'Publish ' + n + ' change' + (n===1?'':'s') + ' to rubyplay.com?';
+  var btn = document.getElementById('publishConfirmButton');
+  if (btn) {
+    if (n === 0) { btn.disabled = true; btn.style.background = 'var(--slate-200)'; btn.style.color = 'var(--slate-500)'; btn.innerHTML = '✓ Nothing to publish'; }
+    else { btn.disabled = false; btn.style.background = 'var(--red)'; btn.style.color = 'white'; btn.innerHTML = '🌐 Publish to rubyplay.com now'; }
+  }
+  var list = document.getElementById('publishConfirmList');
+  if (list) {
+    if (n === 0) {
+      list.innerHTML = '<div style="color:var(--slate-500); text-align:center; padding:14px;">No pending changes. Edit a record and click "Save to preview" first.</div>';
+    } else {
+      list.innerHTML = pendingChanges.map(function(p){
+        var icon = p.flag === 'new' ? '🆕' : '✏';
+        return icon + ' <b>' + p.name + '</b> — ' + p.detail;
+      }).join('<br>');
+    }
+  }
 }
 
 function publishToLive() {
