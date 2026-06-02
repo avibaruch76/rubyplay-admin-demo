@@ -518,7 +518,7 @@
               <div style="display:flex; gap:8px;">
                 <button class="btn btn-ghost" onclick="toast('Opened public studio page in new tab','info')">↗ View public page</button>
                 <button class="btn btn-ghost" onclick="openModal('moreActions')">⋯</button>
-                <button class="btn btn-primary" onclick="toast('Studio saved','success')">Save changes</button>
+                <button class="btn btn-primary" onclick="saveToStaging('this studio')" style="background:var(--red);">✓ Save to preview</button>
               </div>
             </div>
           </div>
@@ -772,17 +772,18 @@
             <div>
               <div class="editor-title"><span id="ed-title">Bufón Fortuna Deluxe 96</span> <span id="ed-status-pill" class="pill pill-sched">Scheduled</span><span id="ed-tag-pill" class="pill pill-tag">Upcoming</span> <span id="ed-publish-state" style="background:#fef3c7; color:#92400e; font-size:11px; padding:3px 9px; border-radius:10px; font-weight:700; margin-left:4px;" title="Has unpublished changes since last live publish">✏ Draft changes</span></div>
               <div class="editor-meta" id="ed-meta">Ruby Play · J Mania® S07 · Game ID: rp_216 · Scheduled for Jun 18, 2026 · last edited 2h ago by avi@</div>
-              <div style="margin-top:8px; font-size:11px; color:var(--slate-500); display:flex; gap:14px;">
+              <div style="margin-top:8px; font-size:11px; color:var(--slate-500); display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
                 <span>📡 <b>Live version:</b> <span style="color:var(--slate-700);">Bufón Fortuna Deluxe 96 v3</span> · published <b>2 days ago</b></span>
                 <span>✏ <b>Staging:</b> <span style="color:var(--amber);">3 unpublished edits</span></span>
                 <span class="link" style="color:var(--red); cursor:pointer; font-weight:600;" onclick="toast('Showing diff between live and staging','info')">View diff →</span>
+                <span style="margin-left:auto; color:var(--slate-400);">→ Publish from <span style="color:var(--red); cursor:pointer; font-weight:600;" onclick="switchView('site-preview')">Live site preview</span></span>
               </div>
             </div>
             <div class="editor-actions">
               <button class="btn btn-ghost" onclick="openModal('preview')">↗ Preview</button>
               <button class="btn btn-ghost" onclick="openModal('moreActions')">⋯</button>
-              <button class="btn btn-ghost" onclick="toast('Saved to staging — preview at the Live site preview view','success')">💾 Save</button>
-              <button class="btn btn-primary" onclick="publishSingleGame()" style="background:var(--red);">🌐 Publish to live</button>
+              <button class="btn btn-ghost" onclick="toast('Saved as draft — not queued for publish yet','info')">Save draft</button>
+              <button class="btn btn-primary" onclick="saveToStaging('this game')" style="background:var(--red);">✓ Save to preview</button>
             </div>
           </div>
         </div>
@@ -1069,8 +1070,8 @@
           <div><h1 class="page-title">Review queue</h1><p class="page-sub">7 submissions waiting for HQ approval before publishing.</p></div>
           <div class="actions"><button class="btn btn-ghost" onclick="toast('Filter applied','info')">Filter ▾</button></div>
         </div>
-        <div class="review-row"><div class="review-thumb" style="background:linear-gradient(135deg,#7c3aed,#1e1b4b);"></div><div class="review-info"><div class="review-game-name">Voltage Blitz King Ra 96</div><div class="review-submitter">Koala Games · kg_5045 · submitted 3 hours ago by Maya Chen</div></div><div class="completeness-bar"><div class="completeness-bar-label"><span>Completeness</span><span>95%</span></div><div class="completeness-bar-track"><div class="completeness-bar-fill" style="width:95%"></div></div></div><div class="review-actions"><button class="btn btn-ghost btn-sm" onclick="openGame('kg_5045')">Review</button><button class="btn btn-primary btn-sm" onclick="approveSubmission(this,'Voltage Blitz King Ra 96')">Approve & publish</button></div></div>
-        <div class="review-row"><div class="review-thumb" style="background:linear-gradient(135deg,#0ea5e9,#0c4a6e);"></div><div class="review-info"><div class="review-game-name">Coelho Jitsu 96</div><div class="review-submitter">Koala Games · kg_5055 · submitted 5 hours ago by Maya Chen</div></div><div class="completeness-bar"><div class="completeness-bar-label"><span>Completeness</span><span>100%</span></div><div class="completeness-bar-track"><div class="completeness-bar-fill" style="width:100%"></div></div></div><div class="review-actions"><button class="btn btn-ghost btn-sm" onclick="openGame('kg_5055')">Review</button><button class="btn btn-primary btn-sm" onclick="approveSubmission(this,'Coelho Jitsu 96')">Approve & publish</button></div></div>
+        <div class="review-row"><div class="review-thumb" style="background:linear-gradient(135deg,#7c3aed,#1e1b4b);"></div><div class="review-info"><div class="review-game-name">Voltage Blitz King Ra 96</div><div class="review-submitter">Koala Games · kg_5045 · submitted 3 hours ago by Maya Chen</div></div><div class="completeness-bar"><div class="completeness-bar-label"><span>Completeness</span><span>95%</span></div><div class="completeness-bar-track"><div class="completeness-bar-fill" style="width:95%"></div></div></div><div class="review-actions"><button class="btn btn-ghost btn-sm" onclick="openGame('kg_5045')">Review</button><button class="btn btn-primary btn-sm" onclick="approveSubmission(this,'Voltage Blitz King Ra 96')">Approve</button></div></div>
+        <div class="review-row"><div class="review-thumb" style="background:linear-gradient(135deg,#0ea5e9,#0c4a6e);"></div><div class="review-info"><div class="review-game-name">Coelho Jitsu 96</div><div class="review-submitter">Koala Games · kg_5055 · submitted 5 hours ago by Maya Chen</div></div><div class="completeness-bar"><div class="completeness-bar-label"><span>Completeness</span><span>100%</span></div><div class="completeness-bar-track"><div class="completeness-bar-fill" style="width:100%"></div></div></div><div class="review-actions"><button class="btn btn-ghost btn-sm" onclick="openGame('kg_5055')">Review</button><button class="btn btn-primary btn-sm" onclick="approveSubmission(this,'Coelho Jitsu 96')">Approve</button></div></div>
         <div class="review-row"><div class="review-thumb" style="background:linear-gradient(135deg,#16a34a,#052e16);"></div><div class="review-info"><div class="review-game-name">BetWarrior Goalinko 96</div><div class="review-submitter">Mad Hat · mh_10007 · submitted 4 hours ago by Tom Müller</div></div><div class="completeness-bar"><div class="completeness-bar-label"><span>Completeness</span><span>88%</span></div><div class="completeness-bar-track"><div class="completeness-bar-fill" style="width:88%"></div></div></div><div class="review-actions"><button class="btn btn-ghost btn-sm" onclick="openGame('mh_10007')">Review</button><button class="btn btn-ghost btn-sm" onclick="openModal('requestChanges')">Request changes</button></div></div>
         <div class="review-row"><div class="review-thumb" style="background:linear-gradient(135deg,#f59e0b,#b91c1c);"></div><div class="review-info"><div class="review-game-name">Sweet Crowns</div><div class="review-submitter">Spincraft · sc_15002 · submitted 1 day ago by Daniel Cohen</div></div><div class="completeness-bar"><div class="completeness-bar-label"><span>Completeness</span><span>72%</span></div><div class="completeness-bar-track"><div class="completeness-bar-fill med" style="width:72%"></div></div></div><div class="review-actions"><button class="btn btn-ghost btn-sm" onclick="openGame('sc_15002')">Review</button><button class="btn btn-ghost btn-sm" onclick="openModal('requestChanges')">Request changes</button></div></div>
         <div class="review-row"><div class="review-thumb" style="background:linear-gradient(135deg,#fbbf24,#7c2d12);"></div><div class="review-info"><div class="review-game-name">Voltage Blitz Lucky Wukong 96</div><div class="review-submitter">Koala Games · kg_5570 · submitted 2 days ago by Maya Chen</div></div><div class="completeness-bar"><div class="completeness-bar-label"><span>Completeness</span><span>78%</span></div><div class="completeness-bar-track"><div class="completeness-bar-fill med" style="width:78%"></div></div></div><div class="review-actions"><button class="btn btn-ghost btn-sm" onclick="openGame('kg_5045')">Review</button><button class="btn btn-ghost btn-sm" onclick="openModal('requestChanges')">Request changes</button></div></div>
@@ -1203,7 +1204,7 @@
       <section class="view" id="view-public-home">
         <div class="page-header-row">
           <div><h1 class="page-title">Group Homepage</h1><p class="page-sub">Block-based composer for rubyplay.com (the parent homepage). Drag to reorder · click a block to edit.</p></div>
-          <div class="actions"><button class="btn btn-ghost" style="border-color:var(--red); color:var(--red);" onclick="openPagePreview('group-home')">👁 Preview homepage</button><button class="btn btn-ghost" onclick="toast('Draft saved','success')">Save draft</button><button class="btn btn-primary" onclick="toast('Homepage published live','success')">Publish</button></div>
+          <div class="actions"><button class="btn btn-ghost" style="border-color:var(--red); color:var(--red);" onclick="openPagePreview('group-home')">👁 Preview homepage</button><button class="btn btn-ghost" onclick="toast('Saved as draft','info')">Save draft</button><button class="btn btn-primary" onclick="saveToStaging('Group homepage')" style="background:var(--red);">✓ Save to preview</button></div>
         </div>
         <div style="display:grid; grid-template-columns: 1fr 280px; gap:20px;">
           <div>
@@ -1473,7 +1474,7 @@
       <section class="view" id="view-public-nav">
         <div class="page-header-row">
           <div><h1 class="page-title">Site navigation</h1><p class="page-sub">The persistent Studio Tab Bar at the top of every page + the main nav links.</p></div>
-          <div class="actions"><button class="btn btn-primary" onclick="toast('Navigation saved','success')">Save changes</button></div>
+          <div class="actions"><button class="btn btn-primary" onclick="saveToStaging('navigation')" style="background:var(--red);">✓ Save to preview</button></div>
         </div>
 
         <div class="card" style="padding:0; margin-bottom:18px;">
@@ -1517,7 +1518,7 @@
       <section class="view" id="view-public-footer">
         <div class="page-header-row">
           <div><h1 class="page-title">Footer</h1><p class="page-sub">Office address, license info, social links, regulatory badges — shown at the bottom of every page.</p></div>
-          <div class="actions"><button class="btn btn-primary" onclick="toast('Footer saved','success')">Save changes</button></div>
+          <div class="actions"><button class="btn btn-primary" onclick="saveToStaging('footer')" style="background:var(--red);">✓ Save to preview</button></div>
         </div>
         <div style="display:grid; grid-template-columns:2fr 1fr; gap:20px;">
           <div>
@@ -2124,7 +2125,7 @@
       </div>
 
       <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:14px; margin-top:14px; font-size:12px; color:var(--slate-700);">
-        <b style="color:var(--blue);">💡 Tip:</b> You can <b>publish individually</b> from each record's editor (each has its own "Publish to live" button), or <b>batch them together</b> here for coordinated releases (e.g. new game + matching news post on the same day).
+        <b style="color:var(--blue);">💡 How publishing works:</b> Every edit saves to <b>staging</b> automatically. The only way to push to <b>live rubyplay.com</b> is from this Live Site Preview view (you can publish a subset or all pending changes together). This guarantees no accidental live edits.
       </div>
     </div>
     <div class="modal-footer">
@@ -2370,7 +2371,7 @@ For partnerships, integrations, or press inquiries, [contact us](/contact) or do
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
       <button class="btn btn-ghost" onclick="closeModal(); toast('Version history opened','info')">History</button>
       <button class="btn btn-ghost" onclick="closeModal(); toast('Draft saved','success')">Save draft</button>
-      <button class="btn btn-primary" onclick="closeModal(); toast('Page published','success')">Save & publish</button>
+      <button class="btn btn-primary" onclick="closeModal(); saveToStaging('this page')" style="background:var(--red);">✓ Save to preview</button>
     </div>
   </div>
 </div>
@@ -2398,7 +2399,7 @@ For partnerships, integrations, or press inquiries, [contact us](/contact) or do
       <div class="form-row"><div><label class="field-label">Body (rich text)</label><div style="background:white; border:1px solid var(--slate-200); border-radius:6px;"><div style="border-bottom:1px solid var(--slate-200); padding:6px 10px; font-size:11px; color:var(--slate-500);">B I U · H1 H2 · ❝ ▤ 🔗 · 📷</div><textarea class="field-textarea" style="border:none; min-height:160px; border-radius:0 0 6px 6px;" placeholder="Write your post..."></textarea></div></div></div>
       <div class="form-row form-row-2"><div><label class="field-label">Tags</label><input class="field-input" placeholder="launch, latam, slot"></div><div><label class="field-label">Featured on homepage?</label><div class="yn-toggle"><button class="active yes" onclick="ynToggle(this)">Yes</button><button onclick="ynToggle(this)">No</button></div></div></div>
     </div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-ghost" onclick="closeModal(); toast('Draft saved','success')">Save draft</button><button class="btn btn-primary" onclick="closeModal(); toast('Post published','success')">Publish</button></div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-ghost" onclick="closeModal(); toast('Saved as draft','info')">Save draft</button><button class="btn btn-primary" onclick="closeModal(); saveToStaging('this news post')" style="background:var(--red);">✓ Save to preview</button></div>
   </div>
 </div>
 
@@ -2614,7 +2615,7 @@ For partnerships, integrations, or press inquiries, [contact us](/contact) or do
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal()">Close</button>
       <button class="btn btn-ghost" onclick="toast('Translation drafts saved','success')">💾 Save drafts</button>
-      <button class="btn btn-primary" onclick="closeModal(); toast('All translations published live','success')">✓ Save & publish</button>
+      <button class="btn btn-primary" onclick="closeModal(); saveToStaging('all translations')" style="background:var(--red);">✓ Save to preview</button>
     </div>
   </div>
 </div>
@@ -2742,16 +2743,18 @@ document.querySelectorAll('.modal-overlay').forEach(m => { m.addEventListener('c
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeUserMenu(); closeNotif(); }});
 
 // Specific actions
-function publishGame() { toast('Publishing…','info'); setTimeout(()=>toast('Wrath of Olympus published live on rubyplay.com','success'), 700); }
+function publishGame() { saveToStaging('this game'); } // legacy alias
 
-function publishSingleGame() {
-  var name = (window.currentGameId && gamesData[window.currentGameId]) ? gamesData[window.currentGameId].name : 'this game';
-  toast('Publishing '+name+' to rubyplay.com…','info');
+function saveToStaging(label) {
+  label = label || 'this record';
+  toast('✓ Saved to preview — review at Live site preview, then publish from there','success');
+  // Update the publish-state badge in the editor header to indicate "saved, queued for publish"
+  var badge = document.getElementById('ed-publish-state');
+  if (badge) { badge.textContent = '✏ Draft changes (saved)'; badge.style.background = '#fef3c7'; badge.style.color = '#92400e'; }
+  // Show a follow-up toast hinting where to publish
   setTimeout(function(){
-    toast(name+' is now live on rubyplay.com (CDN propagating ~30s)','success');
-    var badge = document.getElementById('ed-publish-state');
-    if (badge) { badge.textContent = '✓ Live'; badge.style.background = '#dcfce7'; badge.style.color = '#166534'; }
-  }, 900);
+    toast('💡 Tip: go to Live site preview to push pending changes to rubyplay.com','info');
+  }, 1800);
 }
 
 function publishToLive() {
@@ -2770,7 +2773,7 @@ function publishToLive() {
     if (banner) banner.style.display = 'none';
   }, 2200);
 }
-function approveSubmission(btn, name) { var row = btn.closest('.review-row'); row.style.transition='all 0.3s'; row.style.opacity=0; row.style.transform='translateX(40px)'; setTimeout(()=>row.remove(), 300); toast(name+' approved & published','success'); }
+function approveSubmission(btn, name) { var row = btn.closest('.review-row'); row.style.transition='all 0.3s'; row.style.opacity=0; row.style.transform='translateX(40px)'; setTimeout(()=>row.remove(), 300); toast(name+' approved · added to staging queue (publish from Live site preview)','success'); }
 function setVol(el) { document.querySelectorAll('.vol-step').forEach(s=>s.classList.remove('active')); el.classList.add('active'); toast('Volatility set to '+el.textContent.trim(),'info'); }
 function ynToggle(btn) { var siblings = btn.parentNode.querySelectorAll('button'); siblings.forEach(b=>b.classList.remove('active','yes','no')); btn.classList.add('active'); btn.classList.add(btn.textContent.trim().toLowerCase()==='yes'?'yes':'no'); }
 function addFeature() {
