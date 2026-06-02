@@ -2045,7 +2045,7 @@
 <div class="modal-overlay" id="modal-whatsChanged">
   <div class="modal modal-lg" style="max-height:90vh;">
     <div class="modal-h" style="position:sticky;top:0;background:white;z-index:5;">
-      <h3>📊 Pending changes (6)</h3>
+      <h3 id="whatsChangedTitle">📊 Pending changes (6)</h3>
       <span style="margin-left:auto; font-size:11px; color:var(--slate-500); margin-right:14px;">Edits saved to staging — not yet on rubyplay.com</span>
       <span class="close" onclick="closeModal()">×</span>
     </div>
@@ -2132,7 +2132,7 @@
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
       <button class="btn btn-ghost" onclick="closeModal(); openModal('sharePreview')">🔗 Share preview first</button>
       <button class="btn btn-ghost" onclick="closeModal(); openModal('schedulePublish')">⏰ Schedule…</button>
-      <button class="btn btn-primary" onclick="closeModal(); openModal('publishConfirm')" style="background:var(--red);">🌐 Publish selected (6)</button>
+      <button class="btn btn-primary" id="whatsChangedPublishBtn" onclick="closeModal(); openModal('publishConfirm')" style="background:var(--red);">🌐 Publish selected (6)</button>
     </div>
   </div>
 </div>
@@ -2399,7 +2399,7 @@ For partnerships, integrations, or press inquiries, [contact us](/contact) or do
       <div class="form-row"><div><label class="field-label">Body (rich text)</label><div style="background:white; border:1px solid var(--slate-200); border-radius:6px;"><div style="border-bottom:1px solid var(--slate-200); padding:6px 10px; font-size:11px; color:var(--slate-500);">B I U · H1 H2 · ❝ ▤ 🔗 · 📷</div><textarea class="field-textarea" style="border:none; min-height:160px; border-radius:0 0 6px 6px;" placeholder="Write your post..."></textarea></div></div></div>
       <div class="form-row form-row-2"><div><label class="field-label">Tags</label><input class="field-input" placeholder="launch, latam, slot"></div><div><label class="field-label">Featured on homepage?</label><div class="yn-toggle"><button class="active yes" onclick="ynToggle(this)">Yes</button><button onclick="ynToggle(this)">No</button></div></div></div>
     </div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-ghost" onclick="closeModal(); toast('Saved as draft','info')">Save draft</button><button class="btn btn-primary" onclick="closeModal(); saveToStaging('this news post')" style="background:var(--red);">✓ Save to preview</button></div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-ghost" onclick="closeModal(); toast('Saved as draft','info')">Save draft</button><button class="btn btn-primary" onclick="saveNewsPostToStaging()" style="background:var(--red);">✓ Save to preview</button></div>
   </div>
 </div>
 
@@ -2745,6 +2745,14 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal
 // Specific actions
 function publishGame() { saveToStaging('this game'); } // legacy alias
 
+// NEWS POSTS DATA — read by news-index renderer in the Live Site Preview
+var newsPosts = [
+  { id:'np1', title:'RubyPlay launches Bufón Fortuna Deluxe across LATAM', scope:'RUBY PLAY', scopeColor:'#ef4444', date:'Jun 18, 2026', excerpt:'The next chapter in the J Mania® series brings the festive jester back with bigger wins...', thumb:'linear-gradient(135deg,#ef4444,#7c2d12)', status:'live' },
+  { id:'np2', title:'RubyPlay Group expands to South Africa', scope:'GROUP', scopeColor:'#ef4444', date:'Jun 10, 2026', excerpt:'New regulatory approval brings 12 of our top titles to South African operators...', thumb:'linear-gradient(135deg,#0a0a0a,#ef4444)', status:'live' },
+  { id:'np3', title:'Koala Games: 20 new games in our biggest release wave', scope:'KOALA GAMES', scopeColor:'#7c3aed', date:'Jun 25, 2026', excerpt:'The Voltage Blitz® series enters its third season with King Ra, Coelho Jitsu, and Lucky Wukong...', thumb:'linear-gradient(135deg,#7c3aed,#1e1b4b)', status:'live' },
+  { id:'np4', title:'Spincraft welcomes Crown Jester Gold to its lineup', scope:'SPINCRAFT', scopeColor:'#16a34a', date:'May 12, 2026', excerpt:'A premium monarch-themed slot with 3,040x max win launches across MGA markets...', thumb:'linear-gradient(135deg,#fbbf24,#16a34a)', status:'live' }
+];
+
 // PENDING CHANGES STATE — drives the Live Site Preview publish workflow
 var pendingChanges = [
   { type:'game', id:'rp_216', name:'Bufón Fortuna Deluxe 96', meta:'rp_216', detail:'Tagline + Description + Hero image updated', actor:'avi@', ago:'2h ago', flag:'modified', thumb:'linear-gradient(135deg,#dc2626,#7c2d12)' },
@@ -2783,6 +2791,55 @@ function inferPendingFromLabel(label) {
   if (label.indexOf('footer') !== -1) return { type:'config', id:'footer', name:'Footer', meta:'global', detail:'Footer edits', actor:'avi@', ago:'just now', flag:'modified', icon:'▭' };
   if (label.indexOf('translation') !== -1) return { type:'translations', id:'translations', name:'Translations', meta:'5 languages', detail:'Translation updates', actor:'avi@', ago:'just now', flag:'modified', icon:'🌐' };
   return null;
+}
+
+function saveNewsPostToStaging() {
+  // Grab the title input from the modal-newPost form (first text input)
+  var modal = document.getElementById('modal-newPost');
+  var titleInput = modal ? modal.querySelector('input[placeholder*="RubyPlay launches"]') : null;
+  var scopeSelect = modal ? modal.querySelector('select') : null;
+  var excerptInput = modal ? modal.querySelectorAll('textarea')[0] : null;
+  var dateInput = modal ? modal.querySelector('input[type="date"]') : null;
+  var title = (titleInput && titleInput.value.trim()) || 'Untitled news post';
+  var scopeRaw = scopeSelect ? scopeSelect.value : 'Group-wide';
+  var scope = scopeRaw.toUpperCase().split(' ')[0];
+  var scopeColor = '#ef4444';
+  if (scopeRaw.indexOf('Koala') !== -1) { scope = 'KOALA GAMES'; scopeColor = '#7c3aed'; }
+  else if (scopeRaw.indexOf('Mad Hat') !== -1) { scope = 'MAD HAT'; scopeColor = '#16a34a'; }
+  else if (scopeRaw.indexOf('Spincraft') !== -1) { scope = 'SPINCRAFT'; scopeColor = '#16a34a'; }
+  else if (scopeRaw.indexOf('Ruby Play') !== -1) { scope = 'RUBY PLAY'; scopeColor = '#ef4444'; }
+  else if (scopeRaw.indexOf('Firerose') !== -1) { scope = 'FIREROSE'; scopeColor = '#dc2626'; }
+  else if (scopeRaw.indexOf('X Slots') !== -1) { scope = 'X SLOTS'; scopeColor = '#0f172a'; }
+  else scope = 'GROUP';
+  var dateStr = 'Just now';
+  if (dateInput && dateInput.value) {
+    var d = new Date(dateInput.value);
+    dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  }
+  var excerpt = (excerptInput && excerptInput.value.trim()) || 'New post created from the admin — auto-generated preview.';
+  // Pick a thumb color based on scope
+  var thumbs = { 'RUBY PLAY':'linear-gradient(135deg,#ef4444,#7c2d12)', 'KOALA GAMES':'linear-gradient(135deg,#7c3aed,#1e1b4b)', 'MAD HAT':'linear-gradient(135deg,#16a34a,#052e16)', 'SPINCRAFT':'linear-gradient(135deg,#fbbf24,#16a34a)', 'FIREROSE':'linear-gradient(135deg,#dc2626,#450a0a)', 'X SLOTS':'linear-gradient(135deg,#0f172a,#475569)', 'GROUP':'linear-gradient(135deg,#0a0a0a,#ef4444)' };
+  var newPost = {
+    id: 'np-' + Date.now(),
+    title: title,
+    scope: scope,
+    scopeColor: scopeColor,
+    date: dateStr,
+    excerpt: excerpt,
+    thumb: thumbs[scope] || 'linear-gradient(135deg,#475569,#0f172a)',
+    status: 'staging'
+  };
+  // Add to live newsPosts array (with staging flag) so it appears in the preview
+  newsPosts.unshift(newPost);
+  // Add to pendingChanges queue
+  addPending({
+    type:'news', id:newPost.id, name:title, meta:scope.toLowerCase(),
+    detail:'New post · staged for publish', actor:'avi@', ago:'just now', flag:'new',
+    thumb:newPost.thumb
+  });
+  closeModal();
+  toast('✓ News post "'+title+'" saved to preview — visible in Live site preview now','success');
+  setTimeout(function(){ toast('💡 Tip: open Live site preview → News page to see it staged','info'); }, 1800);
 }
 
 function saveToStaging(label) {
@@ -2846,6 +2903,22 @@ function renderWhatsChanged() {
   var body = document.querySelector('#modal-whatsChanged .modal-body');
   if (!body) return;
   var n = pendingChanges.length;
+  // Update the title and footer button
+  var title = document.getElementById('whatsChangedTitle');
+  if (title) title.textContent = '📊 Pending changes ('+n+')';
+  var pubBtn = document.getElementById('whatsChangedPublishBtn');
+  if (pubBtn) {
+    if (n > 0) {
+      pubBtn.innerHTML = '🌐 Publish selected ('+n+')';
+      pubBtn.disabled = false;
+      pubBtn.style.background = 'var(--red)';
+    } else {
+      pubBtn.innerHTML = '✓ Nothing to publish';
+      pubBtn.disabled = true;
+      pubBtn.style.background = 'var(--slate-200)';
+      pubBtn.style.color = 'var(--slate-500)';
+    }
+  }
   if (n === 0) {
     body.innerHTML = '<div style="padding:40px 20px; text-align:center; color:var(--slate-500);"><div style="font-size:40px; margin-bottom:10px;">✓</div><div style="font-size:15px; font-weight:600; color:var(--slate-700);">Site is up to date</div><div style="font-size:12px; margin-top:6px;">No pending changes. Edit a record and click "Save to preview" to queue it here.</div></div>';
     return;
@@ -2905,9 +2978,15 @@ function publishToLive() {
   setTimeout(function(){ toast('Step 2/3: Invalidating CDN cache','info'); }, 1200);
   setTimeout(function(){
     toast('✓ All '+n+' changes published live on rubyplay.com','success');
+    // Flip every staging news post to live
+    newsPosts.forEach(function(p){ if (p.status === 'staging') p.status = 'live'; });
     pendingChanges = [];
     updatePendingUI();
     renderWhatsChanged();
+    // Re-render the site preview if we're on it (so staging badges disappear)
+    if (typeof renderSitePreview === 'function' && document.getElementById('view-site-preview').classList.contains('active')) {
+      renderSitePreview();
+    }
   }, 2200);
 }
 function approveSubmission(btn, name) { var row = btn.closest('.review-row'); row.style.transition='all 0.3s'; row.style.opacity=0; row.style.transform='translateX(40px)'; setTimeout(()=>row.remove(), 300); toast(name+' approved · added to staging queue (publish from Live site preview)','success'); }
@@ -3624,16 +3703,33 @@ var pagePreviews = {
     rpFooter();
   },
   'news-index': function() {
+    // Render news cards from the live newsPosts array (sorted by date desc)
+    var sorted = newsPosts.slice().sort(function(a,b){
+      // staging items first, then by date desc (best-effort)
+      if (a.status !== b.status) return a.status === 'staging' ? -1 : 1;
+      return 0;
+    });
+    var cards = sorted.map(function(p){
+      var stagingBadge = p.status === 'staging'
+        ? '<span style="position:absolute; top:10px; right:10px; background:#fef3c7; color:#92400e; font-size:10px; padding:3px 8px; border-radius:6px; font-weight:700; box-shadow:0 2px 6px rgba(0,0,0,0.2);">✏ Staging · not yet live</span>'
+        : '';
+      return '<div style="background:#f8fafc; border-radius:10px; overflow:hidden;">'+
+        '<div style="aspect-ratio:16/9; background:'+p.thumb+'; position:relative;">'+stagingBadge+'</div>'+
+        '<div style="padding:16px;">'+
+          '<div style="font-size:11px; color:'+p.scopeColor+'; font-weight:700; margin-bottom:4px;">'+p.scope+' · '+p.date.toUpperCase()+'</div>'+
+          '<div style="font-weight:700; font-size:14px;">'+p.title+'</div>'+
+          '<div style="font-size:12px; color:#475569; margin-top:6px;">'+(p.excerpt||'')+'</div>'+
+        '</div>'+
+      '</div>';
+    }).join('');
     return rpHeader('RUBYPLAY','#ef4444')+
     '<div style="padding:60px 40px; background:white; text-align:center;">'+
       '<div style="font-size:36px; font-weight:800; color:#0a0a0a;">RubyPlay News</div>'+
+      '<div style="font-size:13px; color:#94a3b8; margin-top:6px;">'+newsPosts.length+' posts'+(newsPosts.filter(function(p){return p.status==='staging';}).length>0 ? ' · <span style="color:#92400e;">'+newsPosts.filter(function(p){return p.status==='staging';}).length+' in staging</span>' : '')+'</div>'+
     '</div>'+
     '<div style="padding:0 40px 60px; background:white;">'+
       '<div style="display:grid; grid-template-columns:repeat(2,1fr); gap:20px; max-width:960px; margin:0 auto;">'+
-        '<div style="background:#f8fafc; border-radius:10px; overflow:hidden;"><div style="aspect-ratio:16/9; background:linear-gradient(135deg,#ef4444,#7c2d12);"></div><div style="padding:16px;"><div style="font-size:11px; color:#ef4444; font-weight:700; margin-bottom:4px;">RUBY PLAY · JUN 18, 2026</div><div style="font-weight:700; font-size:14px;">RubyPlay launches Bufón Fortuna Deluxe across LATAM</div><div style="font-size:12px; color:#475569; margin-top:6px;">The next chapter in the J Mania® series brings the festive jester back with bigger wins...</div></div></div>'+
-        '<div style="background:#f8fafc; border-radius:10px; overflow:hidden;"><div style="aspect-ratio:16/9; background:linear-gradient(135deg,#0a0a0a,#ef4444);"></div><div style="padding:16px;"><div style="font-size:11px; color:#ef4444; font-weight:700; margin-bottom:4px;">GROUP · JUN 10, 2026</div><div style="font-weight:700; font-size:14px;">RubyPlay Group expands to South Africa</div><div style="font-size:12px; color:#475569; margin-top:6px;">New regulatory approval brings 12 of our top titles to South African operators...</div></div></div>'+
-        '<div style="background:#f8fafc; border-radius:10px; overflow:hidden;"><div style="aspect-ratio:16/9; background:linear-gradient(135deg,#7c3aed,#1e1b4b);"></div><div style="padding:16px;"><div style="font-size:11px; color:#7c3aed; font-weight:700; margin-bottom:4px;">KOALA GAMES · JUN 25, 2026</div><div style="font-weight:700; font-size:14px;">Koala Games: 20 new games in our biggest release wave</div><div style="font-size:12px; color:#475569; margin-top:6px;">The Voltage Blitz® series enters its third season with King Ra, Coelho Jitsu, and Lucky Wukong...</div></div></div>'+
-        '<div style="background:#f8fafc; border-radius:10px; overflow:hidden;"><div style="aspect-ratio:16/9; background:linear-gradient(135deg,#fbbf24,#16a34a);"></div><div style="padding:16px;"><div style="font-size:11px; color:#16a34a; font-weight:700; margin-bottom:4px;">SPINCRAFT · MAY 12, 2026</div><div style="font-weight:700; font-size:14px;">Spincraft welcomes Crown Jester Gold to its lineup</div><div style="font-size:12px; color:#475569; margin-top:6px;">A premium monarch-themed slot with 3,040x max win launches across MGA markets...</div></div></div>'+
+        cards+
       '</div>'+
     '</div>'+
     rpFooter();
