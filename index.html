@@ -1588,7 +1588,7 @@
         <div class="page-header-row">
           <div><h1 class="page-title">Live site preview</h1><p class="page-sub">This is your staging environment — changes appear here before going live. Browse as a visitor, then publish from here.</p></div>
           <div class="actions" style="flex-wrap:wrap; gap:8px; justify-content:flex-end; max-width:60%;">
-            <button class="btn btn-ghost btn-sm" onclick="openModal('whatsChanged')" style="border-color:var(--amber); color:var(--amber); position:relative;">📊 What's changed <span style="background:var(--amber); color:white; border-radius:10px; padding:1px 7px; margin-left:4px; font-size:11px; font-weight:700;">6</span></button>
+            <button class="btn btn-ghost btn-sm" onclick="renderWhatsChanged(); openModal('whatsChanged');" style="border-color:var(--amber); color:var(--amber); position:relative;">📊 What's changed <span style="background:var(--amber); color:white; border-radius:10px; padding:1px 7px; margin-left:4px; font-size:11px; font-weight:700;">6</span></button>
             <button class="btn btn-ghost btn-sm" onclick="openModal('schedulePublish')">⏰ Schedule</button>
             <button class="btn btn-ghost btn-sm" onclick="openModal('sharePreview')">🔗 Share preview</button>
             <button class="btn btn-primary btn-sm" onclick="openModal('publishConfirm')" style="background:var(--red); color:white; font-weight:700;">🌐 Publish 6 changes to live</button>
@@ -1599,11 +1599,11 @@
             <button class="btn btn-ghost btn-sm" onclick="toast('Opened rubyplay.com (live version) in new tab','info')" title="Open live site">↗</button>
           </div>
         </div>
-        <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:10px 16px; margin-bottom:14px; display:flex; align-items:center; gap:12px; font-size:13px;">
+        <div class="staging-banner" style="background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:10px 16px; margin-bottom:14px; display:flex; align-items:center; gap:12px; font-size:13px;">
           <span style="font-size:18px;">⚠️</span>
           <div style="flex:1;">
             <b style="color:var(--amber);">6 changes pending publish</b>
-            <span style="color:var(--slate-600);"> — what you see below is your staging preview, not the live site yet. <span style="color:var(--red); cursor:pointer; font-weight:600;" onclick="openModal('whatsChanged')">See what's changed →</span></span>
+            <span style="color:var(--slate-600);"> — what you see below is your staging preview, not the live site yet. <span style="color:var(--red); cursor:pointer; font-weight:600;" onclick="openModal('whatsChanged'); renderWhatsChanged();">See what's changed →</span></span>
           </div>
           <span style="font-size:11px; color:var(--slate-500);">Last published: <b>2 days ago</b></span>
         </div>
@@ -2745,32 +2745,169 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal
 // Specific actions
 function publishGame() { saveToStaging('this game'); } // legacy alias
 
+// PENDING CHANGES STATE — drives the Live Site Preview publish workflow
+var pendingChanges = [
+  { type:'game', id:'rp_216', name:'Bufón Fortuna Deluxe 96', meta:'rp_216', detail:'Tagline + Description + Hero image updated', actor:'avi@', ago:'2h ago', flag:'modified', thumb:'linear-gradient(135deg,#dc2626,#7c2d12)' },
+  { type:'game', id:'rp_211', name:'Mad Hit Diamonds Deluxe 96', meta:'rp_211', detail:'4 features updated · Release date moved to Jun 11', actor:'avi@', ago:'4h ago', flag:'modified', thumb:'linear-gradient(135deg,#f59e0b,#78350f)' },
+  { type:'game', id:'sc_15002', name:'Sweet Crowns', meta:'sc_15002', detail:'New game · never published before', actor:'daniel@', ago:'5h ago', flag:'new', thumb:'linear-gradient(135deg,#f59e0b,#b91c1c)' },
+  { type:'studio', id:'spincraft', name:'Spincraft', meta:'studio', detail:'Hero title + Director quote updated', actor:'daniel@', ago:'1d ago', flag:'modified', thumb:'linear-gradient(135deg,#16a34a,#052e16)', icon:'♛' },
+  { type:'page', id:'group-about', name:'About Us', meta:'rubyplay.com/about', detail:'Body content updated', actor:'avi@', ago:'1 week ago', flag:'modified', icon:'ℹ' },
+  { type:'page', id:'group-privacy', name:'Privacy Policy', meta:'rubyplay.com/privacy', detail:'GDPR section added', actor:'legal@', ago:'3 days ago', flag:'modified', icon:'🔒' }
+];
+
+function addPending(item) {
+  // de-dupe by type+id
+  pendingChanges = pendingChanges.filter(function(p){ return !(p.type === item.type && p.id === item.id); });
+  pendingChanges.push(item);
+  updatePendingUI();
+}
+
+function inferPendingFromLabel(label) {
+  label = (label || '').toLowerCase();
+  if (label.indexOf('game') !== -1 && window.currentGameId && gamesData[window.currentGameId]) {
+    var g = gamesData[window.currentGameId];
+    var thumbs = { 'rp_216':'linear-gradient(135deg,#dc2626,#7c2d12)', 'rp_200':'linear-gradient(135deg,#ef4444,#7c2d12)', 'rp_211':'linear-gradient(135deg,#f59e0b,#78350f)', 'kg_5045':'linear-gradient(135deg,#7c3aed,#1e1b4b)', 'kg_5055':'linear-gradient(135deg,#0ea5e9,#0c4a6e)', 'mh_10007':'linear-gradient(135deg,#16a34a,#052e16)', 'rp_242':'linear-gradient(135deg,#be185d,#500724)', 'sc_15002':'linear-gradient(135deg,#f59e0b,#b91c1c)', 'rp_228':'linear-gradient(135deg,#fbbf24,#0f172a)', 'kg_5551':'linear-gradient(135deg,#7c3aed,#0c4a6e)' };
+    return { type:'game', id:window.currentGameId, name:g.name, meta:g.gameId, detail:'Edited just now', actor:'avi@', ago:'just now', flag:'modified', thumb:thumbs[window.currentGameId] || 'linear-gradient(135deg,#475569,#0f172a)' };
+  }
+  if (label.indexOf('studio') !== -1 && window.currentStudioName) {
+    var sid = window.currentStudioName.toLowerCase().replace(/\s+/g,'');
+    return { type:'studio', id:sid, name:window.currentStudioName, meta:'studio', detail:'Studio settings edited', actor:'avi@', ago:'just now', flag:'modified', thumb:'linear-gradient(135deg,#475569,#0f172a)', icon:'★' };
+  }
+  if (label.indexOf('page') !== -1 && window.currentStaticPageKey) {
+    var p = staticPagesData[window.currentStaticPageKey] || { h1:'A page', url:'rubyplay.com/' };
+    return { type:'page', id:window.currentStaticPageKey, name:p.h1, meta:p.url, detail:'Body content edited', actor:'avi@', ago:'just now', flag:'modified', icon:'ℹ' };
+  }
+  if (label.indexOf('news') !== -1) return { type:'news', id:'new-post-'+Date.now(), name:'News post', meta:'news', detail:'New post created', actor:'avi@', ago:'just now', flag:'new', icon:'📰' };
+  if (label.indexOf('group homepage') !== -1) return { type:'page', id:'group-home', name:'Group Homepage', meta:'rubyplay.com/', detail:'Composer edits', actor:'avi@', ago:'just now', flag:'modified', icon:'🏠' };
+  if (label.indexOf('navigation') !== -1) return { type:'config', id:'navigation', name:'Site navigation', meta:'Studio Tab Bar', detail:'Tab bar or nav edits', actor:'avi@', ago:'just now', flag:'modified', icon:'≡' };
+  if (label.indexOf('footer') !== -1) return { type:'config', id:'footer', name:'Footer', meta:'global', detail:'Footer edits', actor:'avi@', ago:'just now', flag:'modified', icon:'▭' };
+  if (label.indexOf('translation') !== -1) return { type:'translations', id:'translations', name:'Translations', meta:'5 languages', detail:'Translation updates', actor:'avi@', ago:'just now', flag:'modified', icon:'🌐' };
+  return null;
+}
+
 function saveToStaging(label) {
   label = label || 'this record';
+  var item = inferPendingFromLabel(label);
+  if (item) addPending(item);
   toast('✓ Saved to preview — review at Live site preview, then publish from there','success');
-  // Update the publish-state badge in the editor header to indicate "saved, queued for publish"
   var badge = document.getElementById('ed-publish-state');
   if (badge) { badge.textContent = '✏ Draft changes (saved)'; badge.style.background = '#fef3c7'; badge.style.color = '#92400e'; }
-  // Show a follow-up toast hinting where to publish
   setTimeout(function(){
     toast('💡 Tip: go to Live site preview to push pending changes to rubyplay.com','info');
   }, 1800);
 }
 
+function updatePendingUI() {
+  var n = pendingChanges.length;
+  // Counter button (What's changed)
+  var changedBtn = document.querySelector('#view-site-preview .actions button[onclick*="whatsChanged"]');
+  if (changedBtn) {
+    if (n > 0) {
+      changedBtn.innerHTML = '📊 What\'s changed <span style="background:var(--amber); color:white; border-radius:10px; padding:1px 7px; margin-left:4px; font-size:11px; font-weight:700;">'+n+'</span>';
+      changedBtn.style.borderColor = 'var(--amber)';
+      changedBtn.style.color = 'var(--amber)';
+      changedBtn.disabled = false;
+    } else {
+      changedBtn.innerHTML = '✓ No pending changes';
+      changedBtn.style.borderColor = 'var(--slate-300)';
+      changedBtn.style.color = 'var(--slate-500)';
+      changedBtn.disabled = true;
+    }
+  }
+  // Publish button
+  var pubBtn = document.querySelector('#view-site-preview .actions button[onclick*="publishConfirm"]');
+  if (pubBtn) {
+    if (n > 0) {
+      pubBtn.innerHTML = '🌐 Publish '+n+' change'+(n===1?'':'s')+' to live';
+      pubBtn.disabled = false;
+      pubBtn.style.background = 'var(--red)';
+      pubBtn.style.color = 'white';
+    } else {
+      pubBtn.innerHTML = '✓ Site up to date';
+      pubBtn.disabled = true;
+      pubBtn.style.background = 'var(--slate-200)';
+      pubBtn.style.color = 'var(--slate-500)';
+    }
+  }
+  // Banner
+  var banner = document.querySelector('#view-site-preview .staging-banner');
+  if (banner) {
+    if (n > 0) {
+      banner.style.display = '';
+      var label = banner.querySelector('b');
+      if (label) label.textContent = n + ' change' + (n===1?'':'s') + ' pending publish';
+    } else {
+      banner.style.display = 'none';
+    }
+  }
+}
+
+function renderWhatsChanged() {
+  var body = document.querySelector('#modal-whatsChanged .modal-body');
+  if (!body) return;
+  var n = pendingChanges.length;
+  if (n === 0) {
+    body.innerHTML = '<div style="padding:40px 20px; text-align:center; color:var(--slate-500);"><div style="font-size:40px; margin-bottom:10px;">✓</div><div style="font-size:15px; font-weight:600; color:var(--slate-700);">Site is up to date</div><div style="font-size:12px; margin-top:6px;">No pending changes. Edit a record and click "Save to preview" to queue it here.</div></div>';
+    return;
+  }
+  // Group by type
+  var groups = { game:[], studio:[], page:[], news:[], config:[], translations:[] };
+  pendingChanges.forEach(function(p){ if (groups[p.type]) groups[p.type].push(p); });
+  var sectionLabels = { game:'Games', studio:'Studios', page:'Pages', news:'News posts', config:'Site config', translations:'Translations' };
+  var html = '<p style="font-size:12px; color:var(--slate-500); margin-bottom:14px;">Uncheck any items you don\'t want to publish in this batch. Last published: <b>2 days ago by avi@</b>.</p>';
+  Object.keys(groups).forEach(function(type) {
+    var items = groups[type];
+    if (items.length === 0) return;
+    html += '<div style="font-size:11px; text-transform:uppercase; color:var(--slate-500); font-weight:600; padding:8px 0; border-bottom:1px solid var(--slate-200); margin:14px 0 6px;">'+sectionLabels[type]+' ('+items.length+')</div>';
+    items.forEach(function(item) {
+      var thumb = item.thumb ? '<div class="game-thumb" style="background:'+item.thumb+';"></div>' : '<div style="width:36px; height:36px; background:var(--slate-100); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:16px;">'+(item.icon||'•')+'</div>';
+      var flagBadge = item.flag === 'new'
+        ? '<span style="font-size:11px; color:var(--green); font-weight:700;">🆕 New</span>'
+        : '<span style="font-size:11px; color:var(--amber); font-weight:700;">✏ Modified</span>';
+      var borderColor = item.flag === 'new' ? '#bbf7d0' : 'var(--slate-200)';
+      var openHandler = '';
+      if (item.type === 'game') openHandler = "closeModal(); openGame('"+item.id+"')";
+      else if (item.type === 'studio') openHandler = "closeModal(); openStudio('"+item.id+"')";
+      else if (item.type === 'page' && item.id === 'group-home') openHandler = "closeModal(); switchView('public-home')";
+      else if (item.type === 'page') openHandler = "closeModal(); openStaticPage('"+item.id+"')";
+      else if (item.type === 'news') openHandler = "closeModal(); switchView('news')";
+      else if (item.type === 'config' && item.id === 'navigation') openHandler = "closeModal(); switchView('public-nav')";
+      else if (item.type === 'config' && item.id === 'footer') openHandler = "closeModal(); switchView('public-footer')";
+      else if (item.type === 'translations') openHandler = "closeModal(); switchView('translations')";
+      html += '<div style="background:#f8fafc; border:1px solid '+borderColor+'; border-radius:8px; padding:12px; margin-bottom:6px; display:flex; align-items:center; gap:12px;">';
+      html += '<input type="checkbox" checked style="width:16px;height:16px;">';
+      html += thumb;
+      html += '<div style="flex:1;">';
+      html += '<div style="font-weight:700; font-size:13px;">'+item.name+(item.meta && item.meta !== item.id ? ' <span style="font-size:11px; color:var(--slate-400); font-weight:400;">· '+item.meta+'</span>' : '')+'</div>';
+      html += '<div style="font-size:11px; color:var(--slate-500);">'+item.detail+' · '+item.ago+' by '+item.actor+'</div>';
+      html += '</div>';
+      html += flagBadge;
+      html += '<button class="btn btn-ghost btn-sm" onclick="'+openHandler+'">Open →</button>';
+      html += '<button class="btn btn-ghost btn-sm" onclick="removePending(\''+item.type+'\',\''+item.id+'\'); renderWhatsChanged();" title="Remove from publish queue">×</button>';
+      html += '</div>';
+    });
+  });
+  html += '<div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:14px; margin-top:14px; font-size:12px; color:var(--slate-700);"><b style="color:var(--blue);">💡 How publishing works:</b> Every edit saves to <b>staging</b> automatically. The only way to push to <b>live rubyplay.com</b> is from this Live Site Preview view (you can publish a subset or all pending changes together). This guarantees no accidental live edits.</div>';
+  body.innerHTML = html;
+}
+
+function removePending(type, id) {
+  pendingChanges = pendingChanges.filter(function(p){ return !(p.type === type && p.id === id); });
+  updatePendingUI();
+}
+
 function publishToLive() {
   closeModal();
-  toast('Publishing 6 changes to rubyplay.com…','info');
+  var n = pendingChanges.length;
+  if (n === 0) { toast('Nothing to publish','info'); return; }
+  toast('Publishing '+n+' change'+(n===1?'':'s')+' to rubyplay.com…','info');
   setTimeout(function(){ toast('Step 1/3: Saving snapshots to production DB','info'); }, 400);
   setTimeout(function(){ toast('Step 2/3: Invalidating CDN cache','info'); }, 1200);
   setTimeout(function(){
-    toast('✓ All 6 changes published live on rubyplay.com','success');
-    // Update the staging banner + button counts to "site up to date"
-    var pendingBtn = document.querySelector('#view-site-preview .actions button[onclick*="whatsChanged"]');
-    if (pendingBtn) pendingBtn.innerHTML = '✓ Site up to date';
-    var publishBtn = document.querySelector('#view-site-preview .actions button[onclick*="publishConfirm"]');
-    if (publishBtn) { publishBtn.innerHTML = '✓ Nothing to publish'; publishBtn.disabled = true; publishBtn.style.background = 'var(--slate-200)'; publishBtn.style.color = 'var(--slate-500)'; }
-    var banner = document.querySelector('#view-site-preview > div:nth-of-type(2)');
-    if (banner) banner.style.display = 'none';
+    toast('✓ All '+n+' changes published live on rubyplay.com','success');
+    pendingChanges = [];
+    updatePendingUI();
+    renderWhatsChanged();
   }, 2200);
 }
 function approveSubmission(btn, name) { var row = btn.closest('.review-row'); row.style.transition='all 0.3s'; row.style.opacity=0; row.style.transform='translateX(40px)'; setTimeout(()=>row.remove(), 300); toast(name+' approved · added to staging queue (publish from Live site preview)','success'); }
@@ -2794,6 +2931,7 @@ document.addEventListener('click', () => { closeUserMenu(); closeNotif(); closeF
 window.addEventListener('load', () => {
   if (typeof filterTable === 'function') filterTable();
   if (typeof updateRoleListCounts === 'function') updateRoleListCounts();
+  if (typeof updatePendingUI === 'function') updatePendingUI();
   // Inject Preview buttons into all Pages list rows
   document.querySelectorAll('#view-public-pages tr[onclick]').forEach(function(tr) {
     var onclickStr = tr.getAttribute('onclick') || '';
