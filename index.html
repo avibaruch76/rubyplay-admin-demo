@@ -518,7 +518,7 @@
               <div style="display:flex; gap:8px;">
                 <button class="btn btn-ghost" onclick="toast('Opened public studio page in new tab','info')">↗ View public page</button>
                 <button class="btn btn-ghost" onclick="openModal('moreActions')">⋯</button>
-                <button class="btn btn-primary" onclick="saveToStaging('this studio')" style="background:var(--red);">✓ Save to preview</button>
+                <button class="btn btn-primary" onclick="saveStudioToStaging()" style="background:var(--red);">✓ Save to preview</button>
               </div>
             </div>
           </div>
@@ -783,7 +783,7 @@
               <button class="btn btn-ghost" onclick="openModal('preview')">↗ Preview</button>
               <button class="btn btn-ghost" onclick="openModal('moreActions')">⋯</button>
               <button class="btn btn-ghost" onclick="toast('Saved as draft — not queued for publish yet','info')">Save draft</button>
-              <button class="btn btn-primary" onclick="saveToStaging('this game')" style="background:var(--red);">✓ Save to preview</button>
+              <button class="btn btn-primary" onclick="saveGameToStaging()" style="background:var(--red);">✓ Save to preview</button>
             </div>
           </div>
         </div>
@@ -2793,6 +2793,102 @@ function inferPendingFromLabel(label) {
   return null;
 }
 
+// Game thumbs by ID — used for pending change rows
+var gameThumbs = {
+  'rp_216':'linear-gradient(135deg,#dc2626,#7c2d12)',
+  'rp_200':'linear-gradient(135deg,#ef4444,#7c2d12)',
+  'rp_211':'linear-gradient(135deg,#f59e0b,#78350f)',
+  'kg_5045':'linear-gradient(135deg,#7c3aed,#1e1b4b)',
+  'kg_5055':'linear-gradient(135deg,#0ea5e9,#0c4a6e)',
+  'mh_10007':'linear-gradient(135deg,#16a34a,#052e16)',
+  'rp_242':'linear-gradient(135deg,#be185d,#500724)',
+  'sc_15002':'linear-gradient(135deg,#f59e0b,#b91c1c)',
+  'rp_228':'linear-gradient(135deg,#fbbf24,#0f172a)',
+  'kg_5551':'linear-gradient(135deg,#7c3aed,#0c4a6e)'
+};
+
+function saveGameToStaging() {
+  if (!window.currentGameId || !gamesData[window.currentGameId]) { saveToStaging('this game'); return; }
+  var id = window.currentGameId;
+  var g = gamesData[id];
+  var get = function(elId, fallback) { var el = document.getElementById(elId); if (!el) return fallback; return el.value !== undefined ? el.value : el.textContent; };
+  // Read all editable game fields and write back to gamesData (mutates the data so preview reflects it)
+  g.name = get('ed-name', g.name);
+  g.gameId = get('ed-gameid', g.gameId);
+  g.slug = get('ed-slug', g.slug);
+  g.releaseDate = get('ed-release', g.releaseDate);
+  g.tagline = get('ed-tagline', g.tagline);
+  g.description = get('ed-description', g.description);
+  g.maxWin = get('ed-maxwin', g.maxWin);
+  g.lineConfig = get('ed-lineconfig', g.lineConfig);
+  g.trailer = get('ed-trailer', g.trailer);
+  g.rtp = get('ed-stats-rtp', g.rtp);
+  g.hitFreq = get('ed-stats-hitfreq', g.hitFreq);
+  g.reelArray = get('ed-reelarray', g.reelArray);
+  g.bfMaxWin = get('ed-bfmaxwin', g.bfMaxWin);
+  // Volatility from active slider step
+  var activeVol = document.querySelector('#ed-vol-slider .vol-step.active');
+  if (activeVol) g.volatility = parseInt(activeVol.getAttribute('data-vol'), 10) || g.volatility;
+  // Buy Feature toggle
+  var bf = document.getElementById('ed-buyfeature');
+  if (bf) {
+    var bfActive = bf.querySelector('button.active');
+    if (bfActive) g.buyFeature = bfActive.classList.contains('yes');
+  }
+  // Mark staging
+  g._status = 'staging';
+  // Update header title live
+  var titleEl = document.getElementById('ed-title'); if (titleEl) titleEl.textContent = g.name;
+  // Update editor badge
+  var badge = document.getElementById('ed-publish-state');
+  if (badge) { badge.textContent = '✏ Draft changes (saved)'; badge.style.background = '#fef3c7'; badge.style.color = '#92400e'; }
+  // Add to pending queue
+  addPending({
+    type:'game', id:id, name:g.name, meta:g.gameId,
+    detail:'Tagline + Description + Stats edited',
+    actor:'avi@', ago:'just now', flag:'modified',
+    thumb: gameThumbs[id] || 'linear-gradient(135deg,#475569,#0f172a)'
+  });
+  toast('✓ "'+g.name+'" saved to preview — visible in Live site preview now','success');
+  setTimeout(function(){ toast('💡 Open Live site preview → Our Games to see the staged version','info'); }, 1800);
+}
+
+function saveStudioToStaging() {
+  if (!window.currentStudioName) { saveToStaging('this studio'); return; }
+  // Find the studio key by matching currentStudioName
+  var sid = null;
+  Object.keys(studiosData).forEach(function(k){ if (studiosData[k].name === window.currentStudioName) sid = k; });
+  if (!sid) { saveToStaging('this studio'); return; }
+  var s = studiosData[sid];
+  var get = function(elId, fallback) { var el = document.getElementById(elId); if (!el) return fallback; return el.value !== undefined ? el.value : el.textContent; };
+  // Read studio fields and mutate
+  s.name = get('studioNameInput', s.name);
+  s.slug = get('studioSlugInput', s.slug);
+  s.founded = get('studioFoundedInput', s.founded);
+  s.hq = get('studioHQInput', s.hq);
+  s.website = get('studioWebsiteInput', s.website);
+  s.email = get('studioEmailInput', s.email);
+  s.tagline = get('studioTaglineInput', s.tagline);
+  s.desc = get('studioDescInput', s.desc);
+  s.primary = get('studioPrimaryColor', s.primary);
+  s.secondary = get('studioSecondaryColor', s.secondary);
+  s.accent = get('studioAccentColor', s.accent);
+  s._status = 'staging';
+  // Update the visible header on the studio detail page (live)
+  var nameEl = document.getElementById('studioName'); if (nameEl) nameEl.textContent = s.name;
+  var taglineEl = document.getElementById('studioTagline'); if (taglineEl) taglineEl.textContent = s.tagline;
+  // Add to pending
+  addPending({
+    type:'studio', id:sid, name:s.name, meta:'studio',
+    detail:'Brand info or homepage content edited',
+    actor:'avi@', ago:'just now', flag:'modified',
+    thumb: s.cover || 'linear-gradient(135deg,'+s.primary+','+s.secondary+')',
+    icon: s.logo || '★'
+  });
+  toast('✓ "'+s.name+'" saved to preview — visible in Live site preview now','success');
+  setTimeout(function(){ toast('💡 Open Live site preview → '+s.name+' tab to see the staged version','info'); }, 1800);
+}
+
 function saveNewsPostToStaging() {
   // Grab the title input from the modal-newPost form (first text input)
   var modal = document.getElementById('modal-newPost');
@@ -2978,8 +3074,10 @@ function publishToLive() {
   setTimeout(function(){ toast('Step 2/3: Invalidating CDN cache','info'); }, 1200);
   setTimeout(function(){
     toast('✓ All '+n+' changes published live on rubyplay.com','success');
-    // Flip every staging news post to live
+    // Flip every staging record to live
     newsPosts.forEach(function(p){ if (p.status === 'staging') p.status = 'live'; });
+    Object.keys(gamesData).forEach(function(k){ if (gamesData[k]._status === 'staging') gamesData[k]._status = 'live'; });
+    Object.keys(studiosData).forEach(function(k){ if (studiosData[k]._status === 'staging') studiosData[k]._status = 'live'; });
     pendingChanges = [];
     updatePendingUI();
     renderWhatsChanged();
@@ -3635,7 +3733,10 @@ var pagePreviews = {
   'studio-home': function(studioKey) {
     var s = studiosData[studioKey||'rubyplay'];
     var brandColor = s.primary;
-    return rpHeader(s.name, brandColor)+
+    var stagingBanner = s._status === 'staging'
+      ? '<div style="background:#fef3c7; border-bottom:1px solid #fde68a; padding:10px 40px; text-align:center; font-size:13px; color:#92400e; font-weight:600;">✏ Staging preview — '+s.name+' has unpublished edits. Visitors to rubyplay.com still see the previous version.</div>'
+      : '';
+    return rpHeader(s.name, brandColor) + stagingBanner +
     '<div style="background:linear-gradient(135deg,'+s.primary+','+s.secondary+'); color:white; padding:80px 40px; text-align:center;">'+
       '<div style="font-size:38px; font-weight:800; max-width:680px; margin:0 auto 16px; color:'+s.accent+';">'+s.tagline+'</div>'+
       '<div style="font-size:14px; opacity:0.85; max-width:580px; margin:0 auto 24px;">'+s.desc.substring(0,180)+'...</div>'+
@@ -3674,7 +3775,8 @@ var pagePreviews = {
   },
   'studio-about': function(studioKey) {
     var s = studiosData[studioKey||'rubyplay'];
-    return rpHeader(s.name, s.primary)+
+    var stagingBanner = s._status === 'staging' ? '<div style="background:#fef3c7; border-bottom:1px solid #fde68a; padding:10px 40px; text-align:center; font-size:13px; color:#92400e; font-weight:600;">✏ Staging preview — unpublished edits.</div>' : '';
+    return rpHeader(s.name, s.primary) + stagingBanner +
     '<div style="padding:60px 40px; background:white; text-align:center;">'+
       '<div style="font-size:36px; font-weight:800; color:#0a0a0a;">About '+s.name+'</div>'+
     '</div>'+
@@ -3686,7 +3788,8 @@ var pagePreviews = {
   },
   'studio-contact': function(studioKey) {
     var s = studiosData[studioKey||'rubyplay'];
-    return rpHeader(s.name, s.primary)+
+    var stagingBanner = s._status === 'staging' ? '<div style="background:#fef3c7; border-bottom:1px solid #fde68a; padding:10px 40px; text-align:center; font-size:13px; color:#92400e; font-weight:600;">✏ Staging preview — unpublished edits.</div>' : '';
+    return rpHeader(s.name, s.primary) + stagingBanner +
     '<div style="padding:60px 40px; background:white; text-align:center;">'+
       '<div style="font-size:36px; font-weight:800; color:#0a0a0a;">Contact '+s.name+'</div>'+
       '<div style="font-size:14px; color:#475569; margin-top:8px;">Get in touch with the '+s.name+' team directly.</div>'+
@@ -3736,6 +3839,12 @@ var pagePreviews = {
   }
 };
 
+// Reusable staging badge
+function stagingBadge(record) {
+  if (!record || record._status !== 'staging') return '';
+  return '<div style="position:absolute; top:10px; right:10px; background:#fef3c7; color:#92400e; font-size:10px; padding:3px 8px; border-radius:6px; font-weight:700; box-shadow:0 2px 6px rgba(0,0,0,0.2); z-index:5;">✏ Staging · not yet live</div>';
+}
+
 // Games index page for site preview (per studio)
 pagePreviews['games-index'] = function(studioKey) {
   var s = studiosData[studioKey||'rubyplay'];
@@ -3784,14 +3893,27 @@ pagePreviews['games-index'] = function(studioKey) {
   };
   var games = gamesByStudio[studioKey] || gamesByStudio.rubyplay;
   var gameCards = games.map(function(g){
-    return '<div style="background:white; border-radius:10px; overflow:hidden; cursor:pointer; transition:transform 0.15s;" onmouseover="this.style.transform=\'translateY(-4px)\';" onmouseout="this.style.transform=\'\';" onclick="window.currentPreviewGame='+JSON.stringify(g).replace(/"/g,'&quot;')+'; openPagePreview(\'game-detail\',\''+studioKey+'\');">'+
+    // If the game has a matching gamesData entry, override fields with the live (possibly staging) data
+    var matchId = null;
+    Object.keys(gamesData).forEach(function(k){ if (gamesData[k].name === g.n) matchId = k; });
+    var live = matchId ? gamesData[matchId] : null;
+    var displayName = live ? live.name : g.n;
+    var displayRtp = live ? live.rtp + '%' : g.rtp;
+    var volLabels = {1:'Low', 2:'Low-Med', 3:'Medium', 4:'Med-High', 5:'High'};
+    var displayVol = live ? (volLabels[live.volatility] || g.vol) : g.vol;
+    var displayMax = live ? live.maxWin : g.max;
+    var isStaging = live && live._status === 'staging';
+    var stagingBadgeHtml = isStaging ? '<div style="position:absolute; top:8px; right:8px; background:#fef3c7; color:#92400e; font-size:9px; padding:2px 7px; border-radius:5px; font-weight:700; box-shadow:0 2px 6px rgba(0,0,0,0.2); z-index:5;">✏ Staging</div>' : '';
+    var clickData = live ? {n:displayName, bg:g.bg, rtp:displayRtp, vol:displayVol, max:displayMax, hf:live.hitFreq, studio:g.studio, id:matchId} : g;
+    return '<div style="background:white; border-radius:10px; overflow:hidden; cursor:pointer; transition:transform 0.15s; position:relative;" onmouseover="this.style.transform=\'translateY(-4px)\';" onmouseout="this.style.transform=\'\';" onclick="window.currentPreviewGame='+JSON.stringify(clickData).replace(/"/g,'&quot;')+'; openPagePreview(\'game-detail\',\''+studioKey+'\');">'+
+      stagingBadgeHtml +
       '<div style="aspect-ratio:1; background:'+g.bg+'; position:relative;">'+
-        '<div style="position:absolute;bottom:10px;left:12px;right:12px;color:white;font-weight:800;font-size:14px;text-shadow:0 2px 8px rgba(0,0,0,0.5);">'+g.n+'</div>'+
+        '<div style="position:absolute;bottom:10px;left:12px;right:12px;color:white;font-weight:800;font-size:14px;text-shadow:0 2px 8px rgba(0,0,0,0.5);">'+displayName+'</div>'+
       '</div>'+
       '<div style="padding:14px 16px; background:#0a0a0a; color:white;">'+
-        '<div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="font-size:10px; opacity:0.6;">RTP</span><b style="font-size:12px; color:'+brandColor+';">'+g.rtp+'</b></div>'+
-        '<div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="font-size:10px; opacity:0.6;">Volatility</span><b style="font-size:12px;">'+g.vol+'</b></div>'+
-        '<div style="display:flex; justify-content:space-between;"><span style="font-size:10px; opacity:0.6;">Max Win</span><b style="font-size:12px; color:'+brandColor+';">'+g.max+'</b></div>'+
+        '<div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="font-size:10px; opacity:0.6;">RTP</span><b style="font-size:12px; color:'+brandColor+';">'+displayRtp+'</b></div>'+
+        '<div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="font-size:10px; opacity:0.6;">Volatility</span><b style="font-size:12px;">'+displayVol+'</b></div>'+
+        '<div style="display:flex; justify-content:space-between;"><span style="font-size:10px; opacity:0.6;">Max Win</span><b style="font-size:12px; color:'+brandColor+';">'+displayMax+'</b></div>'+
       '</div>'+
     '</div>';
   }).join('');
@@ -3817,9 +3939,20 @@ pagePreviews['game-detail'] = function(studioKey) {
   var brandColor = studioKey === 'group' ? '#ef4444' : (s ? s.primary : '#ef4444');
   var name = studioKey === 'group' ? 'RUBYPLAY' : (s ? s.name : 'Ruby Play');
   var g = window.currentPreviewGame || {n:'Bufón Fortuna Deluxe 96', bg:'linear-gradient(135deg,#dc2626,#7c2d12)', rtp:'96.33%', vol:'High', max:'3,000x', hf:'19.06%', studio:'Ruby Play'};
-  return rpHeader(name, brandColor) +
+  // If we have an id matching gamesData, pull live tagline + description (potentially staging)
+  var liveTagline = null, liveDesc = null, isStaging = false;
+  if (g.id && gamesData[g.id]) {
+    liveTagline = gamesData[g.id].tagline;
+    liveDesc = gamesData[g.id].description;
+    isStaging = gamesData[g.id]._status === 'staging';
+  }
+  var stagingBanner = isStaging
+    ? '<div style="background:#fef3c7; border-bottom:1px solid #fde68a; padding:10px 40px; text-align:center; font-size:13px; color:#92400e; font-weight:600;">✏ Staging preview — this page reflects unpublished edits. Visitors to rubyplay.com still see the previously-published version.</div>'
+    : '';
+  return rpHeader(name, brandColor) + stagingBanner +
     '<div style="background:white; padding:30px 40px 10px; text-align:center;">'+
       '<div style="font-size:32px; font-weight:800; color:#0a0a0a; letter-spacing:-0.02em;">'+g.n+'</div>'+
+      (liveTagline ? '<div style="font-size:14px; color:'+brandColor+'; margin-top:6px; font-weight:600;">'+liveTagline+'</div>' : '') +
     '</div>'+
     '<div style="padding:0 40px;">'+
       '<div style="aspect-ratio:21/9; background:'+g.bg+'; border-radius:14px; position:relative; overflow:hidden; display:flex; align-items:flex-end; padding:30px;">'+
@@ -3831,9 +3964,9 @@ pagePreviews['game-detail'] = function(studioKey) {
       '</div>'+
     '</div>'+
     '<div style="background:#0a0a0a; color:white; padding:40px; margin-top:30px;">'+
-      '<div style="text-align:center; color:'+brandColor+'; font-size:14px; font-weight:700; margin-bottom:18px;">Supporting one-liner, game intro</div>'+
+      '<div style="text-align:center; color:'+brandColor+'; font-size:14px; font-weight:700; margin-bottom:18px;">'+(liveTagline||'Supporting one-liner, game intro')+'</div>'+
       '<div style="max-width:880px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr; gap:40px; align-items:start;">'+
-        '<div style="font-size:13px; line-height:1.8; opacity:0.85;">Climb Mount Olympus in this 6-reel epic where Zeus himself awakens with cascading wins. Lightning wilds and a maximum '+g.max+' payout await. Each spin can trigger the wrath of the gods — culminating in the Zeus respin feature where divine multipliers stack to deliver legendary wins.<br><br>Nulla blandit ac metus interdum vestibulum. Suspendisse metus leo, pellentesque non odio quis, blandit molestie eros. Nulla lacinia massa ac ullamcorper iaculis.</div>'+
+        '<div style="font-size:13px; line-height:1.8; opacity:0.85;">'+(liveDesc || ('Climb Mount Olympus in this 6-reel epic where Zeus himself awakens with cascading wins. Lightning wilds and a maximum '+g.max+' payout await.'))+'</div>'+
         '<div>'+
           '<div style="background:'+brandColor+'; color:white; border:none; padding:12px 24px; border-radius:24px; font-size:13px; font-weight:700; text-align:center; cursor:pointer; margin-bottom:18px;">▶ Play Demo</div>'+
           '<div style="font-size:12px;">'+
