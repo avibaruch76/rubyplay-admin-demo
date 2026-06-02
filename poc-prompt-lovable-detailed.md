@@ -947,6 +947,235 @@ Each renderer takes (studioKey, brandColor) and returns full styled HTML of the 
     - Footer
 
 ═══════════════════════════════════════════════════════════════════
+TRANSLATION ENGINE (cross-cutting — used by Phase 3 Translations tab + Phase 10 Translations Hub + every static page editor)
+═══════════════════════════════════════════════════════════════════
+
+The platform must support automated content translation from English → Spanish, German, Portuguese, Italian (and future languages). UI strings stay English; only CONTENT translates.
+
+WHAT GETS TRANSLATED:
+- Game: tagline, description, features[].name, features[].description
+- Studio: tagline, description, director_quote, hero_title, hero_subtitle, about_body
+- News post: title, excerpt, body
+- Static page: title, body, meta_title, meta_description
+
+WHAT NEVER TRANSLATES (these stay as the original source):
+- Brand/product names: "Bufón Fortuna Deluxe 96", "Voltage Blitz®", "Mad Hit®", "RubyPlay" — all proper nouns
+- Numeric data: RTP %, Volatility, Hit Frequency, Max Win multiplier, Reel Array
+- Identifiers: Game ID (rp_216), slug, URL paths
+- Operator/B2B documents: math sheets, RGS guides, GLI certificates (English-only)
+- Legal text: Privacy Policy must be lawyer-approved per locale (auto-translate with explicit "DRAFT — needs legal review" flag)
+
+DATA MODEL ADDITIONS:
+
+Each translatable record gets a `translations` JSONB column structured as:
+```
+{
+  "es": {
+    "tagline": { "value": "La suerte del bufón regresa", "status": "approved", "engine": "gpt-4o", "translated_at": "2026-06-01T12:00:00Z", "approved_by": "translator@rubyplay.com", "approved_at": "2026-06-01T14:00:00Z" },
+    "description": { "value": "...", "status": "auto_draft", "engine": "gpt-4o", "translated_at": "..." }
+  },
+  "de": { ... },
+  "pt": { ... },
+  "it": { ... }
+}
+```
+
+Status values: `missing` (no translation) · `auto_draft` (machine-translated, awaiting review) · `pending_review` (translator submitted) · `approved` (live on public site) · `stale` (source text changed since translation — needs re-translation)
+
+ENDPOINT — POST /api/translate
+
+Request body:
+```
+{
+  "record_type": "game" | "studio" | "news" | "static_page",
+  "record_id": "rp_216",
+  "source_lang": "en",
+  "target_langs": ["es", "de", "pt", "it"],
+  "fields": ["tagline", "description", "features"],  // omit to translate all translatable fields
+  "engine": "gpt-4o" | "deepl",  // defaults to gpt-4o for marketing copy, deepl for legal
+  "force_retranslate": false  // if true, overwrite existing translations
+}
+```
+
+Server-side flow:
+1. Fetch record from database
+2. Read the relevant glossary (see below) for that record's domain
+3. Call the chosen MT engine (one API call per language) with a domain-tuned system prompt
+4. Save each result into `translations[lang][field]` with status = "auto_draft"
+5. Return the translated payload
+
+Response:
+```
+{
+  "record_id": "rp_216",
+  "translated": {
+    "es": { "tagline": "...", "description": "...", ... },
+    "de": { ... },
+    ...
+  },
+  "engine_used": "gpt-4o",
+  "cost_estimate_usd": 0.018,
+  "elapsed_ms": 2400
+}
+```
+
+ENGINE — GPT-4o (or Claude Sonnet) PROMPT TEMPLATE (for marketing copy):
+
+```
+You are translating slot game marketing copy from English to {target_lang_name}.
+
+CONTEXT: This is for an online casino game called "{game_name}" by {studio_name}. The theme is "{theme}". The target audience is online casino players in {target_market_region}.
+
+DOMAIN GLOSSARY (use these exact terms — do NOT translate them):
+- "Buy Feature" stays as "{glossary[target_lang].buy_feature}"
+- "Free Spins" stays as "{glossary[target_lang].free_spins}"
+- "Wild" stays as "{glossary[target_lang].wild}"
+- "Scatter" stays as "{glossary[target_lang].scatter}"
+- "Cascade" stays as "{glossary[target_lang].cascade}"
+- "Respin" stays as "{glossary[target_lang].respin}"
+- "RTP" stays as "RTP" (universal casino term)
+- "Volatility" stays as "{glossary[target_lang].volatility}"
+- "Multiplier" stays as "{glossary[target_lang].multiplier}"
+- Brand names ({brand_glossary}) — do NOT translate
+
+TONE: Energetic, engaging, marketing-grade. Match the source's energy. Keep it crisp — casino players skim.
+
+PRESERVE:
+- HTML tags (e.g. <b>...</b>) — translate the inner text only
+- Numbers and multipliers (e.g. "10,000x", "96.33%")
+- Currency symbols and punctuation style appropriate to the target locale
+
+OUTPUT: Return ONLY the translated text. No explanations, no quotes around the output.
+
+SOURCE TEXT:
+"""
+{source_text}
+"""
+```
+
+For legal/static-page text → use DeepL instead (cheaper, more reliable for formal content).
+
+GLOSSARY TABLE (new admin screen)
+
+Add a Settings sub-section: "Translation glossary" — admin manages domain-specific term mappings per language.
+
+Default seed entries (Spanish):
+| English | Spanish | Notes |
+|---|---|---|
+| Free Spins | Tiradas Gratis | Casino industry standard |
+| Wild | Wild | Don't translate (English casino term) |
+| Scatter | Símbolo Scatter | Half-translate |
+| Buy Feature | Compra de Bono | Industry term |
+| Cascade | Cascada | |
+| Respin | Regiro | |
+| Volatility | Volatilidad | |
+| Multiplier | Multiplicador | |
+| Bonus Buy | Compra de Bono | |
+| Megaways | Megaways | Don't translate (trademarked) |
+
+Default seed entries (German):
+| Free Spins | Freispiele |
+| Buy Feature | Bonus Kauf |
+| Cascade | Kaskade |
+| Respin | Re-Spin |
+| Volatility | Volatilität |
+| Multiplier | Multiplikator |
+| Megaways | Megaways |
+
+And similar for Portuguese, Italian. Admin can edit/add per language.
+
+BRAND GLOSSARY (separate sub-section):
+
+List of brand names that must NEVER translate:
+- RubyPlay, Ruby Play
+- Koala Games
+- Mad Hat
+- Spincraft
+- Firerose
+- X Slots
+- J Mania® / Mad Hit® / Diamond Explosion® / Voltage Blitz® / Rush Fever® / Immortal Ways® / 20K+ Ways® / Goalinko / Crown Jester
+- Bufón Fortuna Deluxe 96 and all other game names
+
+The translation prompt enforces these as literal pass-through.
+
+UI ADDITIONS
+
+1. Translations tab in Game Editor (already in Phase 3 spec):
+   - Each language row now shows a status pill: ✓ Approved (green) / ✨ Auto-draft (amber) / ⏳ Pending review (blue) / ❌ Missing (red) / ⚠ Stale (orange)
+   - "✨ Auto-translate" button per language → calls /api/translate for that single language
+   - "✨ Auto-translate all missing" button at top → bulk
+   - "✓ Approve" button on auto-drafts (Translator/HQ Editor/HQ Admin role only)
+   - "🔄 Re-translate" button on stale entries
+   - If source English text changes, mark all approved translations as "Stale" automatically
+
+2. Translation Review modal (Phase 10):
+   - Shows per-game cards grouped by status
+   - Top buttons: "✨ Auto-translate all missing" + "📥 Export CSV"
+   - Each card has its 3-state display (missing/draft/approved) with the right action
+
+3. New screen: Settings → Translation glossary
+   - Tab per language (Spanish, German, Portuguese, Italian)
+   - Table of glossary entries (English → translated)
+   - "+ Add entry" button
+   - "Import standard casino glossary" button (pre-seed from industry defaults)
+
+4. Settings → Integrations:
+   - GPT-4o (marketing copy) — Connected · model: gpt-4o · cost: ~$10/M chars — [Manage] [Test]
+   - DeepL (legal/static) — Connected · plan: Pro — [Manage] [Test]
+
+PUBLIC SITE RENDERING — FALLBACK CHAIN
+
+When the public site renders a localized field, use this order:
+1. translations[user_lang][field].value if status === "approved"
+2. translations[user_lang][field].value if status === "auto_draft" AND siteSettings.show_auto_drafts === true
+3. The original English source field as fallback
+
+A user visiting rubyplay.com?lang=de gets German if approved, otherwise falls back to English (never broken empty content).
+
+DRIFT DETECTION
+
+When the English source field changes:
+1. Compute hash of new English text
+2. If any translation exists with a different source_hash → mark that translation's status = "stale"
+3. Show ⚠ warning badge in the Translations tab
+4. Show "Re-translate" button to refresh
+
+This prevents stale translations from staying in production after the source text changes.
+
+BULK OPERATIONS
+
+POST /api/translate/bulk with:
+```
+{
+  "filter": { "studio_id": "koala", "status": "missing" },
+  "target_lang": "de",
+  "fields": ["tagline", "description"]
+}
+```
+
+Returns a job ID; status polling at GET /api/translate/jobs/:id. Useful for "Auto-translate all 105 Portuguese-missing games in one go" workflow.
+
+COST & RATE LIMITING
+
+- Track translation cost per record + per month
+- Settings → Translation usage page shows: This month's spend ($), char count, by-engine breakdown
+- Admin-configurable monthly cap (default $50/month) — when hit, "Auto-translate" buttons disable with warning
+- Per-user rate limit (Translator role: 10 auto-translate calls per minute, prevents accidental loops)
+
+ACCEPTANCE TESTS FOR TRANSLATION ENGINE:
+
+✅ Click "✨ Auto-translate" on Bufón Fortuna's German row → translation appears, status pill = "✨ Auto-draft"
+✅ As Translator role, click "✓ Approve" on the German row → status changes to "✓ Approved"
+✅ Edit Bufón Fortuna's English tagline → all 4 language statuses flip to "⚠ Stale"
+✅ Click "🔄 Re-translate" on a stale row → fresh translation, status = "✨ Auto-draft" again
+✅ Visit rubyplay.com/games/bufon-fortuna-deluxe-96?lang=de → shows the approved German tagline
+✅ Visit rubyplay.com/games/bufon-fortuna-deluxe-96?lang=fr (no French) → falls back to English without errors
+✅ Try to auto-translate as Contributor role (no translation permission) → button is disabled or hidden
+✅ The translation glossary "Buy Feature" → "Compra de Bono" is honored in the German output
+✅ Brand names like "Mad Hit®" are passed through unchanged in all translations
+✅ HTML <b> tags in description are preserved in translations
+
+═══════════════════════════════════════════════════════════════════
 PHASE 17: REVIEW QUEUE (id: view-review)
 ═══════════════════════════════════════════════════════════════════
 
