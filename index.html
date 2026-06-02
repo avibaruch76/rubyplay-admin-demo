@@ -361,8 +361,6 @@
       <div class="nav-item" data-view="public-nav"><span class="nav-icon">≡</span>Navigation</div>
       <div class="nav-item" data-view="public-footer"><span class="nav-icon">▭</span>Footer</div>
       <div class="nav-item" data-view="site-preview"><span class="nav-icon">👁</span>Live site preview</div>
-      <div class="nav-section">Workflow</div>
-      <div class="nav-item" data-view="review"><span class="nav-icon">✓</span>Review queue<span class="nav-badge">7</span></div>
       <div class="nav-section">Admin</div>
       <div class="nav-item" data-view="users"><span class="nav-icon">◉</span>Users & roles</div>
       <div class="nav-item" data-view="settings"><span class="nav-icon">⚙</span>Settings</div>
@@ -417,7 +415,7 @@
           <div class="stat" onclick="switchView('games')"><div class="stat-label">Live games</div><div class="stat-value">656</div><div class="stat-delta">+40 upcoming</div></div>
           <div class="stat" onclick="switchView('studios')"><div class="stat-label">Studios</div><div class="stat-value">6</div><div class="stat-delta">4 active · 2 ramping</div></div>
           <div class="stat" onclick="switchView('releases')"><div class="stat-label">Scheduled</div><div class="stat-value">40</div><div class="stat-delta">Next: Jun 04</div></div>
-          <div class="stat" onclick="switchView('review')"><div class="stat-label">Pending review</div><div class="stat-value" style="color:var(--red)">7</div><div class="stat-delta neg">↑ 3 since yesterday</div></div>
+          <div class="stat" onclick="switchView('site-preview')"><div class="stat-label">Pending publish</div><div class="stat-value" style="color:var(--red)" id="dashPendingCount">11</div><div class="stat-delta neg">Review + publish from Live site preview</div></div>
         </div>
         <div class="two-col">
           <div class="card">
@@ -430,11 +428,11 @@
             </div>
           </div>
           <div class="card">
-            <div class="card-h"><h3>Review queue</h3><span class="link" onclick="switchView('review')">View all →</span></div>
+            <div class="card-h"><h3>Pending publish</h3><span class="link" onclick="switchView('site-preview')">Review & publish →</span></div>
             <div>
-              <div class="activity-row" onclick="switchView('review')"><div class="avatar" style="background:#7c3aed; width:30px; height:30px; font-size:11px;">KG</div><div class="meta"><div class="activity-title">Voltage Blitz King Ra 96</div><div class="activity-detail">Submitted by Maya (Koala Games)</div></div><span class="pill pill-review">95%</span></div>
-              <div class="activity-row" onclick="switchView('review')"><div class="avatar" style="background:#16a34a; width:30px; height:30px; font-size:11px;">SC</div><div class="meta"><div class="activity-title">Sweet Crowns</div><div class="activity-detail">Submitted by Daniel (Spincraft)</div></div><span class="pill pill-review">72%</span></div>
-              <div class="activity-row" onclick="switchView('review')"><div class="avatar" style="background:#0f172a; width:30px; height:30px; font-size:11px;">MH</div><div class="meta"><div class="activity-title">BetWarrior Goalinko 96</div><div class="activity-detail">Submitted by Tom (Mad Hat)</div></div><span class="pill pill-review">88%</span></div>
+              <div class="activity-row" onclick="switchView('site-preview')"><div class="avatar" style="background:#7c3aed; width:30px; height:30px; font-size:11px;">MC</div><div class="meta"><div class="activity-title">Voltage Blitz King Ra 96</div><div class="activity-detail">Saved by Maya · Koala Games · 95% complete</div></div><span class="pill pill-review">Awaiting review</span></div>
+              <div class="activity-row" onclick="switchView('site-preview')"><div class="avatar" style="background:#16a34a; width:30px; height:30px; font-size:11px;">DC</div><div class="meta"><div class="activity-title">Sweet Crowns</div><div class="activity-detail">Saved by Daniel · Spincraft · 72% complete</div></div><span class="pill pill-review">Awaiting review</span></div>
+              <div class="activity-row" onclick="switchView('site-preview')"><div class="avatar" style="background:#ef4444; width:30px; height:30px; font-size:11px;">AB</div><div class="meta"><div class="activity-title">Bufón Fortuna Deluxe 96</div><div class="activity-detail">Saved by Avi · Ruby Play · HQ Admin (auto-approved)</div></div><span class="pill pill-tag">Ready to publish</span></div>
             </div>
           </div>
         </div>
@@ -1064,17 +1062,13 @@
         </div>
       </section>
 
-      <!-- REVIEW QUEUE -->
+      <!-- REVIEW QUEUE — MERGED INTO PENDING CHANGES (kept as redirect for any stale links) -->
       <section class="view" id="view-review">
-        <div class="page-header-row">
-          <div><h1 class="page-title">Review queue</h1><p class="page-sub">7 submissions waiting for HQ approval before publishing.</p></div>
-          <div class="actions"><button class="btn btn-ghost" onclick="toast('Filter applied','info')">Filter ▾</button></div>
+        <div style="background:white; border:1px solid var(--slate-200); border-radius:12px; padding:40px; text-align:center;">
+          <div style="font-size:42px; margin-bottom:14px;">📊</div>
+          <div style="font-size:18px; font-weight:700; color:var(--slate-900); margin-bottom:6px;">Review queue moved</div>
+          <div style="font-size:13px; color:var(--slate-500); max-width:520px; margin:0 auto 18px;">All submissions are now reviewed in <b>Live site preview → What's changed</b>. HQ sees every staged item — auto-approved (HQ saves) and submissions awaiting review (Studio Lead saves) — in one place. <a href="#" style="color:var(--red); font-weight:600;" onclick="switchView('site-preview'); return false;">Go there →</a></div>
         </div>
-        <div class="review-row"><div class="review-thumb" style="background:linear-gradient(135deg,#7c3aed,#1e1b4b);"></div><div class="review-info"><div class="review-game-name">Voltage Blitz King Ra 96</div><div class="review-submitter">Koala Games · kg_5045 · submitted 3 hours ago by Maya Chen</div></div><div class="completeness-bar"><div class="completeness-bar-label"><span>Completeness</span><span>95%</span></div><div class="completeness-bar-track"><div class="completeness-bar-fill" style="width:95%"></div></div></div><div class="review-actions"><button class="btn btn-ghost btn-sm" onclick="openGame('kg_5045')">Review</button><button class="btn btn-primary btn-sm" onclick="approveSubmission(this,'Voltage Blitz King Ra 96')">Approve</button></div></div>
-        <div class="review-row"><div class="review-thumb" style="background:linear-gradient(135deg,#0ea5e9,#0c4a6e);"></div><div class="review-info"><div class="review-game-name">Coelho Jitsu 96</div><div class="review-submitter">Koala Games · kg_5055 · submitted 5 hours ago by Maya Chen</div></div><div class="completeness-bar"><div class="completeness-bar-label"><span>Completeness</span><span>100%</span></div><div class="completeness-bar-track"><div class="completeness-bar-fill" style="width:100%"></div></div></div><div class="review-actions"><button class="btn btn-ghost btn-sm" onclick="openGame('kg_5055')">Review</button><button class="btn btn-primary btn-sm" onclick="approveSubmission(this,'Coelho Jitsu 96')">Approve</button></div></div>
-        <div class="review-row"><div class="review-thumb" style="background:linear-gradient(135deg,#16a34a,#052e16);"></div><div class="review-info"><div class="review-game-name">BetWarrior Goalinko 96</div><div class="review-submitter">Mad Hat · mh_10007 · submitted 4 hours ago by Tom Müller</div></div><div class="completeness-bar"><div class="completeness-bar-label"><span>Completeness</span><span>88%</span></div><div class="completeness-bar-track"><div class="completeness-bar-fill" style="width:88%"></div></div></div><div class="review-actions"><button class="btn btn-ghost btn-sm" onclick="openGame('mh_10007')">Review</button><button class="btn btn-ghost btn-sm" onclick="openModal('requestChanges')">Request changes</button></div></div>
-        <div class="review-row"><div class="review-thumb" style="background:linear-gradient(135deg,#f59e0b,#b91c1c);"></div><div class="review-info"><div class="review-game-name">Sweet Crowns</div><div class="review-submitter">Spincraft · sc_15002 · submitted 1 day ago by Daniel Cohen</div></div><div class="completeness-bar"><div class="completeness-bar-label"><span>Completeness</span><span>72%</span></div><div class="completeness-bar-track"><div class="completeness-bar-fill med" style="width:72%"></div></div></div><div class="review-actions"><button class="btn btn-ghost btn-sm" onclick="openGame('sc_15002')">Review</button><button class="btn btn-ghost btn-sm" onclick="openModal('requestChanges')">Request changes</button></div></div>
-        <div class="review-row"><div class="review-thumb" style="background:linear-gradient(135deg,#fbbf24,#7c2d12);"></div><div class="review-info"><div class="review-game-name">Voltage Blitz Lucky Wukong 96</div><div class="review-submitter">Koala Games · kg_5570 · submitted 2 days ago by Maya Chen</div></div><div class="completeness-bar"><div class="completeness-bar-label"><span>Completeness</span><span>78%</span></div><div class="completeness-bar-track"><div class="completeness-bar-fill med" style="width:78%"></div></div></div><div class="review-actions"><button class="btn btn-ghost btn-sm" onclick="openGame('kg_5045')">Review</button><button class="btn btn-ghost btn-sm" onclick="openModal('requestChanges')">Request changes</button></div></div>
       </section>
 
       <!-- RELEASES -->
@@ -2041,6 +2035,21 @@
   .perm-row:last-child { border-bottom:none; }
 </style>
 
+<!-- REJECT ITEM (with feedback) -->
+<div class="modal-overlay" id="modal-rejectItem">
+  <div class="modal">
+    <div class="modal-h"><h3>Reject submission</h3><span class="close" onclick="closeModal()">×</span></div>
+    <div class="modal-body">
+      <p style="font-size:13px; color:var(--slate-700); margin-bottom:14px;">The submitter will be notified by email and in-app. The item will be removed from the publish queue (still saved as a draft they can revise).</p>
+      <div class="form-row"><div><label class="field-label">What needs to change? (optional)</label><textarea class="field-textarea" rows="4" placeholder="e.g. Add the Buy Feature screenshot · Description text needs proofreading · Volatility rating should be High not Medium"></textarea></div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" style="background:var(--red);" onclick="confirmReject()">↩ Reject & notify submitter</button>
+    </div>
+  </div>
+</div>
+
 <!-- WHAT'S CHANGED PANEL -->
 <div class="modal-overlay" id="modal-whatsChanged">
   <div class="modal modal-lg" style="max-height:90vh;">
@@ -2749,13 +2758,23 @@ var newsPosts = [
 ];
 
 // PENDING CHANGES STATE — drives the Live Site Preview publish workflow
+// `reviewState`: 'auto_approved' (HQ saves) · 'needs_review' (Studio Lead/Contributor) · 'approved' (HQ approved a submission)
+// `completeness`: 0-100 (only set for non-HQ submissions)
 var pendingChanges = [
-  { type:'game', id:'rp_216', name:'Bufón Fortuna Deluxe 96', meta:'rp_216', detail:'Tagline + Description + Hero image updated', actor:'avi@', ago:'2h ago', flag:'modified', thumb:'linear-gradient(135deg,#dc2626,#7c2d12)' },
-  { type:'game', id:'rp_211', name:'Mad Hit Diamonds Deluxe 96', meta:'rp_211', detail:'4 features updated · Release date moved to Jun 11', actor:'avi@', ago:'4h ago', flag:'modified', thumb:'linear-gradient(135deg,#f59e0b,#78350f)' },
-  { type:'game', id:'sc_15002', name:'Sweet Crowns', meta:'sc_15002', detail:'New game · never published before', actor:'daniel@', ago:'5h ago', flag:'new', thumb:'linear-gradient(135deg,#f59e0b,#b91c1c)' },
-  { type:'studio', id:'spincraft', name:'Spincraft', meta:'studio', detail:'Hero title + Director quote updated', actor:'daniel@', ago:'1d ago', flag:'modified', thumb:'linear-gradient(135deg,#16a34a,#052e16)', icon:'♛' },
-  { type:'page', id:'group-about', name:'About Us', meta:'rubyplay.com/about', detail:'Body content updated', actor:'avi@', ago:'1 week ago', flag:'modified', icon:'ℹ' },
-  { type:'page', id:'group-privacy', name:'Privacy Policy', meta:'rubyplay.com/privacy', detail:'GDPR section added', actor:'legal@', ago:'3 days ago', flag:'modified', icon:'🔒' }
+  // HQ Admin's own saves — auto-approved
+  { type:'game', id:'rp_216', name:'Bufón Fortuna Deluxe 96', meta:'rp_216', detail:'Tagline + Description + Hero image updated', actor:'Avi Baruch', actorEmail:'avi@', actorRole:'HQ Admin', actorBg:'#ef4444', actorInitials:'AB', ago:'2h ago', flag:'modified', thumb:'linear-gradient(135deg,#dc2626,#7c2d12)', reviewState:'auto_approved' },
+  { type:'game', id:'rp_211', name:'Mad Hit Diamonds Deluxe 96', meta:'rp_211', detail:'4 features updated · Release date moved to Jun 11', actor:'Avi Baruch', actorEmail:'avi@', actorRole:'HQ Admin', actorBg:'#ef4444', actorInitials:'AB', ago:'4h ago', flag:'modified', thumb:'linear-gradient(135deg,#f59e0b,#78350f)', reviewState:'auto_approved' },
+  // Submissions from Studio Leads / Contributors — need review
+  { type:'game', id:'kg_5045', name:'Voltage Blitz King Ra 96', meta:'kg_5045', detail:'New game · ready for HQ review', actor:'Maya Chen', actorEmail:'maya@', actorRole:'Studio Lead', actorBg:'#7c3aed', actorInitials:'MC', studio:'Koala Games', ago:'3h ago', flag:'new', thumb:'linear-gradient(135deg,#7c3aed,#1e1b4b)', reviewState:'needs_review', completeness:95 },
+  { type:'game', id:'kg_5055', name:'Coelho Jitsu 96', meta:'kg_5055', detail:'New game · ready for HQ review', actor:'Maya Chen', actorEmail:'maya@', actorRole:'Studio Lead', actorBg:'#7c3aed', actorInitials:'MC', studio:'Koala Games', ago:'5h ago', flag:'new', thumb:'linear-gradient(135deg,#0ea5e9,#0c4a6e)', reviewState:'needs_review', completeness:100 },
+  { type:'game', id:'mh_10007', name:'BetWarrior Goalinko 96', meta:'mh_10007', detail:'Co-branded sport slot · ready for review', actor:'Tom Müller', actorEmail:'tom@', actorRole:'Studio Lead', actorBg:'#0f172a', actorInitials:'TM', studio:'Mad Hat', ago:'4h ago', flag:'new', thumb:'linear-gradient(135deg,#16a34a,#052e16)', reviewState:'needs_review', completeness:88 },
+  { type:'game', id:'sc_15002', name:'Sweet Crowns', meta:'sc_15002', detail:'New game · still incomplete (72%)', actor:'Daniel Cohen', actorEmail:'daniel@', actorRole:'Studio Lead', actorBg:'#16a34a', actorInitials:'DC', studio:'Spincraft', ago:'1d ago', flag:'new', thumb:'linear-gradient(135deg,#f59e0b,#b91c1c)', reviewState:'needs_review', completeness:72 },
+  { type:'game', id:'kg_5570', name:'Voltage Blitz Lucky Wukong 96', meta:'kg_5570', detail:'Chinese-themed slot · still incomplete (78%)', actor:'Maya Chen', actorEmail:'maya@', actorRole:'Studio Lead', actorBg:'#7c3aed', actorInitials:'MC', studio:'Koala Games', ago:'2d ago', flag:'new', thumb:'linear-gradient(135deg,#fbbf24,#7c2d12)', reviewState:'needs_review', completeness:78 },
+  // Studio edit by Studio Lead — needs review
+  { type:'studio', id:'spincraft', name:'Spincraft', meta:'studio', detail:'Hero title + Director quote updated', actor:'Daniel Cohen', actorEmail:'daniel@', actorRole:'Studio Lead', actorBg:'#16a34a', actorInitials:'DC', studio:'Spincraft', ago:'1d ago', flag:'modified', thumb:'linear-gradient(135deg,#16a34a,#052e16)', icon:'♛', reviewState:'needs_review', completeness:100 },
+  // Static page edits by HQ — auto-approved
+  { type:'page', id:'group-about', name:'About Us', meta:'rubyplay.com/about', detail:'Body content updated', actor:'Avi Baruch', actorEmail:'avi@', actorRole:'HQ Admin', actorBg:'#ef4444', actorInitials:'AB', ago:'1 week ago', flag:'modified', icon:'ℹ', reviewState:'auto_approved' },
+  { type:'page', id:'group-privacy', name:'Privacy Policy', meta:'rubyplay.com/privacy', detail:'GDPR section added', actor:'Legal Team', actorEmail:'legal@', actorRole:'HQ Editor', actorBg:'#475569', actorInitials:'LT', ago:'3 days ago', flag:'modified', icon:'🔒', reviewState:'auto_approved' }
 ];
 
 function addPending(item) {
@@ -2770,21 +2789,21 @@ function inferPendingFromLabel(label) {
   if (label.indexOf('game') !== -1 && window.currentGameId && gamesData[window.currentGameId]) {
     var g = gamesData[window.currentGameId];
     var thumbs = { 'rp_216':'linear-gradient(135deg,#dc2626,#7c2d12)', 'rp_200':'linear-gradient(135deg,#ef4444,#7c2d12)', 'rp_211':'linear-gradient(135deg,#f59e0b,#78350f)', 'kg_5045':'linear-gradient(135deg,#7c3aed,#1e1b4b)', 'kg_5055':'linear-gradient(135deg,#0ea5e9,#0c4a6e)', 'mh_10007':'linear-gradient(135deg,#16a34a,#052e16)', 'rp_242':'linear-gradient(135deg,#be185d,#500724)', 'sc_15002':'linear-gradient(135deg,#f59e0b,#b91c1c)', 'rp_228':'linear-gradient(135deg,#fbbf24,#0f172a)', 'kg_5551':'linear-gradient(135deg,#7c3aed,#0c4a6e)' };
-    return { type:'game', id:window.currentGameId, name:g.name, meta:g.gameId, detail:'Edited just now', actor:'avi@', ago:'just now', flag:'modified', thumb:thumbs[window.currentGameId] || 'linear-gradient(135deg,#475569,#0f172a)' };
+    return { type:'game', id:window.currentGameId, name:g.name, meta:g.gameId, detail:'Edited just now', actor:'Avi Baruch', actorEmail:'avi@', actorRole:'HQ Admin', actorBg:'#ef4444', actorInitials:'AB', ago:'just now', flag:'modified', reviewState:'auto_approved', thumb:thumbs[window.currentGameId] || 'linear-gradient(135deg,#475569,#0f172a)' };
   }
   if (label.indexOf('studio') !== -1 && window.currentStudioName) {
     var sid = window.currentStudioName.toLowerCase().replace(/\s+/g,'');
-    return { type:'studio', id:sid, name:window.currentStudioName, meta:'studio', detail:'Studio settings edited', actor:'avi@', ago:'just now', flag:'modified', thumb:'linear-gradient(135deg,#475569,#0f172a)', icon:'★' };
+    return { type:'studio', id:sid, name:window.currentStudioName, meta:'studio', detail:'Studio settings edited', actor:'Avi Baruch', actorEmail:'avi@', actorRole:'HQ Admin', actorBg:'#ef4444', actorInitials:'AB', ago:'just now', flag:'modified', reviewState:'auto_approved', thumb:'linear-gradient(135deg,#475569,#0f172a)', icon:'★' };
   }
   if (label.indexOf('page') !== -1 && window.currentStaticPageKey) {
     var p = staticPagesData[window.currentStaticPageKey] || { h1:'A page', url:'rubyplay.com/' };
-    return { type:'page', id:window.currentStaticPageKey, name:p.h1, meta:p.url, detail:'Body content edited', actor:'avi@', ago:'just now', flag:'modified', icon:'ℹ' };
+    return { type:'page', id:window.currentStaticPageKey, name:p.h1, meta:p.url, detail:'Body content edited', actor:'Avi Baruch', actorEmail:'avi@', actorRole:'HQ Admin', actorBg:'#ef4444', actorInitials:'AB', ago:'just now', flag:'modified', reviewState:'auto_approved', icon:'ℹ' };
   }
-  if (label.indexOf('news') !== -1) return { type:'news', id:'new-post-'+Date.now(), name:'News post', meta:'news', detail:'New post created', actor:'avi@', ago:'just now', flag:'new', icon:'📰' };
-  if (label.indexOf('group homepage') !== -1) return { type:'page', id:'group-home', name:'Group Homepage', meta:'rubyplay.com/', detail:'Composer edits', actor:'avi@', ago:'just now', flag:'modified', icon:'🏠' };
-  if (label.indexOf('navigation') !== -1) return { type:'config', id:'navigation', name:'Site navigation', meta:'Studio Tab Bar', detail:'Tab bar or nav edits', actor:'avi@', ago:'just now', flag:'modified', icon:'≡' };
-  if (label.indexOf('footer') !== -1) return { type:'config', id:'footer', name:'Footer', meta:'global', detail:'Footer edits', actor:'avi@', ago:'just now', flag:'modified', icon:'▭' };
-  if (label.indexOf('translation') !== -1) return { type:'translations', id:'translations', name:'Translations', meta:'5 languages', detail:'Translation updates', actor:'avi@', ago:'just now', flag:'modified', icon:'🌐' };
+  if (label.indexOf('news') !== -1) return { type:'news', id:'new-post-'+Date.now(), name:'News post', meta:'news', detail:'New post created', actor:'Avi Baruch', actorEmail:'avi@', actorRole:'HQ Admin', actorBg:'#ef4444', actorInitials:'AB', ago:'just now', flag:'new', reviewState:'auto_approved', icon:'📰' };
+  if (label.indexOf('group homepage') !== -1) return { type:'page', id:'group-home', name:'Group Homepage', meta:'rubyplay.com/', detail:'Composer edits', actor:'Avi Baruch', actorEmail:'avi@', actorRole:'HQ Admin', actorBg:'#ef4444', actorInitials:'AB', ago:'just now', flag:'modified', reviewState:'auto_approved', icon:'🏠' };
+  if (label.indexOf('navigation') !== -1) return { type:'config', id:'navigation', name:'Site navigation', meta:'Studio Tab Bar', detail:'Tab bar or nav edits', actor:'Avi Baruch', actorEmail:'avi@', actorRole:'HQ Admin', actorBg:'#ef4444', actorInitials:'AB', ago:'just now', flag:'modified', reviewState:'auto_approved', icon:'≡' };
+  if (label.indexOf('footer') !== -1) return { type:'config', id:'footer', name:'Footer', meta:'global', detail:'Footer edits', actor:'Avi Baruch', actorEmail:'avi@', actorRole:'HQ Admin', actorBg:'#ef4444', actorInitials:'AB', ago:'just now', flag:'modified', reviewState:'auto_approved', icon:'▭' };
+  if (label.indexOf('translation') !== -1) return { type:'translations', id:'translations', name:'Translations', meta:'5 languages', detail:'Translation updates', actor:'Avi Baruch', actorEmail:'avi@', actorRole:'HQ Admin', actorBg:'#ef4444', actorInitials:'AB', ago:'just now', flag:'modified', reviewState:'auto_approved', icon:'🌐' };
   return null;
 }
 
@@ -2837,12 +2856,14 @@ function saveGameToStaging() {
   // Update editor badge
   var badge = document.getElementById('ed-publish-state');
   if (badge) { badge.textContent = '✏ Draft changes (saved)'; badge.style.background = '#fef3c7'; badge.style.color = '#92400e'; }
-  // Add to pending queue
+  // Add to pending queue — current user is HQ Admin (Avi) so auto-approved
   addPending({
     type:'game', id:id, name:g.name, meta:g.gameId,
     detail:'Tagline + Description + Stats edited',
-    actor:'avi@', ago:'just now', flag:'modified',
-    thumb: gameThumbs[id] || 'linear-gradient(135deg,#475569,#0f172a)'
+    actor:'Avi Baruch', actorEmail:'avi@', actorRole:'HQ Admin', actorBg:'#ef4444', actorInitials:'AB',
+    ago:'just now', flag:'modified',
+    thumb: gameThumbs[id] || 'linear-gradient(135deg,#475569,#0f172a)',
+    reviewState:'auto_approved'
   });
   toast('✓ "'+g.name+'" saved to preview — visible in Live site preview now','success');
   setTimeout(function(){ toast('💡 Open Live site preview → Our Games to see the staged version','info'); }, 1800);
@@ -2876,9 +2897,11 @@ function saveStudioToStaging() {
   addPending({
     type:'studio', id:sid, name:s.name, meta:'studio',
     detail:'Brand info or homepage content edited',
-    actor:'avi@', ago:'just now', flag:'modified',
+    actor:'Avi Baruch', actorEmail:'avi@', actorRole:'HQ Admin', actorBg:'#ef4444', actorInitials:'AB',
+    ago:'just now', flag:'modified',
     thumb: s.cover || 'linear-gradient(135deg,'+s.primary+','+s.secondary+')',
-    icon: s.logo || '★'
+    icon: s.logo || '★',
+    reviewState:'auto_approved'
   });
   toast('✓ "'+s.name+'" saved to preview — visible in Live site preview now','success');
   setTimeout(function(){ toast('💡 Open Live site preview → '+s.name+' tab to see the staged version','info'); }, 1800);
@@ -2925,8 +2948,11 @@ function saveNewsPostToStaging() {
   // Add to pendingChanges queue
   addPending({
     type:'news', id:newPost.id, name:title, meta:scope.toLowerCase(),
-    detail:'New post · staged for publish', actor:'avi@', ago:'just now', flag:'new',
-    thumb:newPost.thumb
+    detail:'New post · staged for publish',
+    actor:'Avi Baruch', actorEmail:'avi@', actorRole:'HQ Admin', actorBg:'#ef4444', actorInitials:'AB',
+    ago:'just now', flag:'new',
+    thumb:newPost.thumb,
+    reviewState:'auto_approved'
   });
   closeModal();
   toast('✓ News post "'+title+'" saved to preview — visible in Live site preview now','success');
@@ -2947,13 +2973,16 @@ function saveToStaging(label) {
 
 function updatePendingUI() {
   var n = pendingChanges.length;
+  var publishable = pendingChanges.filter(function(p){ return p.reviewState === 'approved' || p.reviewState === 'auto_approved'; }).length;
+  var needsReview = pendingChanges.filter(function(p){ return p.reviewState === 'needs_review'; }).length;
   // Counter button (What's changed)
   var changedBtn = document.querySelector('#view-site-preview .actions button[onclick*="whatsChanged"]');
   if (changedBtn) {
     if (n > 0) {
-      changedBtn.innerHTML = '📊 What\'s changed <span style="background:var(--amber); color:white; border-radius:10px; padding:1px 7px; margin-left:4px; font-size:11px; font-weight:700;">'+n+'</span>';
-      changedBtn.style.borderColor = 'var(--amber)';
-      changedBtn.style.color = 'var(--amber)';
+      var reviewBadge = needsReview > 0 ? ' <span style="background:var(--amber); color:white; border-radius:10px; padding:1px 7px; margin-left:4px; font-size:11px; font-weight:700;" title="'+needsReview+' need HQ review">⏳ '+needsReview+'</span>' : '';
+      changedBtn.innerHTML = '📊 What\'s changed <span style="background:var(--slate-700); color:white; border-radius:10px; padding:1px 7px; margin-left:4px; font-size:11px; font-weight:700;">'+n+'</span>' + reviewBadge;
+      changedBtn.style.borderColor = needsReview > 0 ? 'var(--amber)' : 'var(--slate-300)';
+      changedBtn.style.color = needsReview > 0 ? 'var(--amber)' : 'var(--slate-700)';
       changedBtn.disabled = false;
     } else {
       changedBtn.innerHTML = '✓ No pending changes';
@@ -2962,14 +2991,19 @@ function updatePendingUI() {
       changedBtn.disabled = true;
     }
   }
-  // Publish button
+  // Publish button — only counts approved items
   var pubBtn = document.querySelector('#view-site-preview .actions button[onclick*="publishConfirm"]');
   if (pubBtn) {
-    if (n > 0) {
-      pubBtn.innerHTML = '🌐 Publish '+n+' change'+(n===1?'':'s')+' to live';
+    if (publishable > 0) {
+      pubBtn.innerHTML = '🌐 Publish '+publishable+' change'+(publishable===1?'':'s')+' to live';
       pubBtn.disabled = false;
       pubBtn.style.background = 'var(--red)';
       pubBtn.style.color = 'white';
+    } else if (n > 0) {
+      pubBtn.innerHTML = '⚠ Approve submissions to publish';
+      pubBtn.disabled = true;
+      pubBtn.style.background = 'var(--slate-200)';
+      pubBtn.style.color = 'var(--slate-500)';
     } else {
       pubBtn.innerHTML = '✓ Site up to date';
       pubBtn.disabled = true;
@@ -2983,12 +3017,20 @@ function updatePendingUI() {
     if (n > 0) {
       banner.style.display = '';
       var label = banner.querySelector('b');
-      if (label) label.textContent = n + ' change' + (n===1?'':'s') + ' pending publish';
+      if (label) label.textContent = n + ' change' + (n===1?'':'s') + ' pending'+(needsReview > 0 ? ' · '+needsReview+' need HQ review' : '');
     } else {
       banner.style.display = 'none';
     }
   }
+  // Dashboard counter
+  var dashCount = document.getElementById('dashPendingCount');
+  if (dashCount) dashCount.textContent = n;
 }
+
+// FILTER STATE for the pending list (by reviewState + by submitter)
+var pendingFilter = { state: 'all', submitter: 'all' };
+
+function setPendingFilter(key, value) { pendingFilter[key] = value; renderWhatsChanged(); }
 
 function renderWhatsChanged() {
   var body = document.querySelector('#modal-whatsChanged .modal-body');
@@ -2998,13 +3040,15 @@ function renderWhatsChanged() {
   var title = document.getElementById('whatsChangedTitle');
   if (title) title.textContent = '📊 Pending changes ('+n+')';
   var pubBtn = document.getElementById('whatsChangedPublishBtn');
+  // Count items that are publishable (auto_approved OR approved by HQ — NOT needs_review)
+  var publishableCount = pendingChanges.filter(function(p){ return p.reviewState === 'auto_approved' || p.reviewState === 'approved'; }).length;
   if (pubBtn) {
-    if (n > 0) {
-      pubBtn.innerHTML = '🌐 Publish selected ('+n+')';
+    if (publishableCount > 0) {
+      pubBtn.innerHTML = '🌐 Publish selected ('+publishableCount+')';
       pubBtn.disabled = false;
       pubBtn.style.background = 'var(--red)';
     } else {
-      pubBtn.innerHTML = '✓ Nothing to publish';
+      pubBtn.innerHTML = n > 0 ? '⚠ Approve submissions first' : '✓ Nothing to publish';
       pubBtn.disabled = true;
       pubBtn.style.background = 'var(--slate-200)';
       pubBtn.style.color = 'var(--slate-500)';
@@ -3014,45 +3058,139 @@ function renderWhatsChanged() {
     body.innerHTML = '<div style="padding:40px 20px; text-align:center; color:var(--slate-500);"><div style="font-size:40px; margin-bottom:10px;">✓</div><div style="font-size:15px; font-weight:600; color:var(--slate-700);">Site is up to date</div><div style="font-size:12px; margin-top:6px;">No pending changes. Edit a record and click "Save to preview" to queue it here.</div></div>';
     return;
   }
+  // Counts for filter chips
+  var needsReviewCount = pendingChanges.filter(function(p){ return p.reviewState === 'needs_review'; }).length;
+  var approvedCount = pendingChanges.filter(function(p){ return p.reviewState === 'approved' || p.reviewState === 'auto_approved'; }).length;
+  // Filter
+  var filtered = pendingChanges.slice();
+  if (pendingFilter.state === 'needs_review') filtered = filtered.filter(function(p){ return p.reviewState === 'needs_review'; });
+  if (pendingFilter.state === 'approved') filtered = filtered.filter(function(p){ return p.reviewState === 'approved' || p.reviewState === 'auto_approved'; });
+  if (pendingFilter.submitter !== 'all') filtered = filtered.filter(function(p){ return p.actorRole === pendingFilter.submitter; });
   // Group by type
   var groups = { game:[], studio:[], page:[], news:[], config:[], translations:[] };
-  pendingChanges.forEach(function(p){ if (groups[p.type]) groups[p.type].push(p); });
+  filtered.forEach(function(p){ if (groups[p.type]) groups[p.type].push(p); });
   var sectionLabels = { game:'Games', studio:'Studios', page:'Pages', news:'News posts', config:'Site config', translations:'Translations' };
-  var html = '<p style="font-size:12px; color:var(--slate-500); margin-bottom:14px;">Uncheck any items you don\'t want to publish in this batch. Last published: <b>2 days ago by avi@</b>.</p>';
-  Object.keys(groups).forEach(function(type) {
-    var items = groups[type];
-    if (items.length === 0) return;
-    html += '<div style="font-size:11px; text-transform:uppercase; color:var(--slate-500); font-weight:600; padding:8px 0; border-bottom:1px solid var(--slate-200); margin:14px 0 6px;">'+sectionLabels[type]+' ('+items.length+')</div>';
-    items.forEach(function(item) {
-      var thumb = item.thumb ? '<div class="game-thumb" style="background:'+item.thumb+';"></div>' : '<div style="width:36px; height:36px; background:var(--slate-100); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:16px;">'+(item.icon||'•')+'</div>';
-      var flagBadge = item.flag === 'new'
-        ? '<span style="font-size:11px; color:var(--green); font-weight:700;">🆕 New</span>'
-        : '<span style="font-size:11px; color:var(--amber); font-weight:700;">✏ Modified</span>';
-      var borderColor = item.flag === 'new' ? '#bbf7d0' : 'var(--slate-200)';
-      var openHandler = '';
-      if (item.type === 'game') openHandler = "closeModal(); openGame('"+item.id+"')";
-      else if (item.type === 'studio') openHandler = "closeModal(); openStudio('"+item.id+"')";
-      else if (item.type === 'page' && item.id === 'group-home') openHandler = "closeModal(); switchView('public-home')";
-      else if (item.type === 'page') openHandler = "closeModal(); openStaticPage('"+item.id+"')";
-      else if (item.type === 'news') openHandler = "closeModal(); switchView('news')";
-      else if (item.type === 'config' && item.id === 'navigation') openHandler = "closeModal(); switchView('public-nav')";
-      else if (item.type === 'config' && item.id === 'footer') openHandler = "closeModal(); switchView('public-footer')";
-      else if (item.type === 'translations') openHandler = "closeModal(); switchView('translations')";
-      html += '<div style="background:#f8fafc; border:1px solid '+borderColor+'; border-radius:8px; padding:12px; margin-bottom:6px; display:flex; align-items:center; gap:12px;">';
-      html += '<input type="checkbox" checked style="width:16px;height:16px;">';
-      html += thumb;
-      html += '<div style="flex:1;">';
-      html += '<div style="font-weight:700; font-size:13px;">'+item.name+(item.meta && item.meta !== item.id ? ' <span style="font-size:11px; color:var(--slate-400); font-weight:400;">· '+item.meta+'</span>' : '')+'</div>';
-      html += '<div style="font-size:11px; color:var(--slate-500);">'+item.detail+' · '+item.ago+' by '+item.actor+'</div>';
-      html += '</div>';
-      html += flagBadge;
-      html += '<button class="btn btn-ghost btn-sm" onclick="'+openHandler+'">Open →</button>';
-      html += '<button class="btn btn-ghost btn-sm" onclick="removePending(\''+item.type+'\',\''+item.id+'\'); renderWhatsChanged();" title="Remove from publish queue">×</button>';
-      html += '</div>';
-    });
+  var html = '<p style="font-size:12px; color:var(--slate-500); margin-bottom:10px;">Every save lands here. Submissions from Studio Leads need HQ approval before they can publish. Last published: <b>2 days ago by avi@</b>.</p>';
+  // Filter chips
+  html += '<div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; padding:8px 0; border-bottom:1px solid var(--slate-200);">';
+  html += '<span style="font-size:11px; color:var(--slate-500); padding:6px 4px; font-weight:600; text-transform:uppercase;">Filter:</span>';
+  ['all','needs_review','approved'].forEach(function(s){
+    var label = s === 'all' ? 'All ('+n+')' : s === 'needs_review' ? '⏳ Needs HQ review ('+needsReviewCount+')' : '✓ Ready to publish ('+approvedCount+')';
+    var active = pendingFilter.state === s;
+    html += '<span style="background:'+(active?'var(--red)':'white')+'; color:'+(active?'white':'var(--slate-700)')+'; border:1px solid '+(active?'var(--red)':'var(--slate-200)')+'; padding:5px 11px; border-radius:14px; font-size:11px; font-weight:600; cursor:pointer;" onclick="setPendingFilter(\'state\',\''+s+'\')">'+label+'</span>';
   });
-  html += '<div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:14px; margin-top:14px; font-size:12px; color:var(--slate-700);"><b style="color:var(--blue);">💡 How publishing works:</b> Every edit saves to <b>staging</b> automatically. The only way to push to <b>live rubyplay.com</b> is from this Live Site Preview view (you can publish a subset or all pending changes together). This guarantees no accidental live edits.</div>';
+  // Submitter filter
+  var submitters = ['all','HQ Admin','HQ Editor','Studio Lead','Contributor'];
+  submitters.forEach(function(s){
+    var c = s === 'all' ? n : pendingChanges.filter(function(p){return p.actorRole===s;}).length;
+    if (c === 0 && s !== 'all') return;
+    var label = (s === 'all' ? 'All submitters' : s) + (s !== 'all' ? ' ('+c+')' : '');
+    var active = pendingFilter.submitter === s;
+    html += '<span style="background:'+(active?'var(--red)':'white')+'; color:'+(active?'white':'var(--slate-700)')+'; border:1px solid '+(active?'var(--red)':'var(--slate-200)')+'; padding:5px 11px; border-radius:14px; font-size:11px; font-weight:600; cursor:pointer; margin-left:'+(s==='all'?'auto':'0')+';" onclick="setPendingFilter(\'submitter\',\''+s+'\')">'+label+'</span>';
+  });
+  html += '</div>';
+
+  if (filtered.length === 0) {
+    html += '<div style="padding:30px 20px; text-align:center; color:var(--slate-500); font-size:13px;">No items match the current filters. <span style="color:var(--red); cursor:pointer; font-weight:600;" onclick="setPendingFilter(\'state\',\'all\'); setPendingFilter(\'submitter\',\'all\')">Clear filters →</span></div>';
+  } else {
+    Object.keys(groups).forEach(function(type) {
+      var items = groups[type];
+      if (items.length === 0) return;
+      html += '<div style="font-size:11px; text-transform:uppercase; color:var(--slate-500); font-weight:600; padding:8px 0; border-bottom:1px solid var(--slate-200); margin:14px 0 6px;">'+sectionLabels[type]+' ('+items.length+')</div>';
+      items.forEach(function(item) {
+        var thumb = item.thumb ? '<div class="game-thumb" style="background:'+item.thumb+';"></div>' : '<div style="width:36px; height:36px; background:var(--slate-100); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:16px;">'+(item.icon||'•')+'</div>';
+        var flagBadge = item.flag === 'new'
+          ? '<span style="font-size:10px; color:var(--green); font-weight:700; background:#dcfce7; padding:2px 7px; border-radius:8px;">🆕 New</span>'
+          : '<span style="font-size:10px; color:var(--amber); font-weight:700; background:#fef3c7; padding:2px 7px; border-radius:8px;">✏ Modified</span>';
+        var borderColor = item.reviewState === 'needs_review' ? '#fde68a' : (item.flag === 'new' ? '#bbf7d0' : 'var(--slate-200)');
+        var bgColor = item.reviewState === 'needs_review' ? '#fffbeb' : '#f8fafc';
+        var openHandler = '';
+        if (item.type === 'game') openHandler = "closeModal(); openGame('"+item.id+"')";
+        else if (item.type === 'studio') openHandler = "closeModal(); openStudio('"+item.id+"')";
+        else if (item.type === 'page' && item.id === 'group-home') openHandler = "closeModal(); switchView('public-home')";
+        else if (item.type === 'page') openHandler = "closeModal(); openStaticPage('"+item.id+"')";
+        else if (item.type === 'news') openHandler = "closeModal(); switchView('news')";
+        else if (item.type === 'config' && item.id === 'navigation') openHandler = "closeModal(); switchView('public-nav')";
+        else if (item.type === 'config' && item.id === 'footer') openHandler = "closeModal(); switchView('public-footer')";
+        else if (item.type === 'translations') openHandler = "closeModal(); switchView('translations')";
+        // Submitter avatar + info
+        var submitterHtml = '<div style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--slate-600);">'+
+          '<div class="avatar" style="width:22px;height:22px;font-size:9px;background:'+item.actorBg+';">'+item.actorInitials+'</div>'+
+          '<span><b>'+item.actor+'</b> · '+item.actorRole+(item.studio ? ' · '+item.studio : '')+' · '+item.ago+'</span>'+
+        '</div>';
+        // Review state badge
+        var stateBadge = '';
+        if (item.reviewState === 'needs_review') stateBadge = '<span style="background:#fef3c7; color:#92400e; font-size:10px; padding:3px 9px; border-radius:10px; font-weight:700;">⏳ Needs HQ review</span>';
+        else if (item.reviewState === 'approved') stateBadge = '<span style="background:#dcfce7; color:#166534; font-size:10px; padding:3px 9px; border-radius:10px; font-weight:700;">✓ Approved by HQ</span>';
+        else if (item.reviewState === 'auto_approved') stateBadge = '<span style="background:#dbeafe; color:#1e40af; font-size:10px; padding:3px 9px; border-radius:10px; font-weight:700;">✓ HQ save · auto-approved</span>';
+        // Completeness bar
+        var completeBar = '';
+        if (typeof item.completeness === 'number') {
+          var color = item.completeness >= 90 ? 'var(--green)' : item.completeness >= 70 ? 'var(--amber)' : 'var(--red)';
+          completeBar = '<div style="width:120px;"><div style="font-size:10px; color:var(--slate-500); display:flex; justify-content:space-between; margin-bottom:2px;"><span>Completeness</span><span>'+item.completeness+'%</span></div><div style="background:var(--slate-100); height:5px; border-radius:3px; overflow:hidden;"><div style="background:'+color+'; height:100%; width:'+item.completeness+'%;"></div></div></div>';
+        }
+        // Actions per row depending on state
+        var actions = '';
+        if (item.reviewState === 'needs_review') {
+          actions = '<button class="btn btn-ghost btn-sm" onclick="'+openHandler+'">Review</button>'+
+            '<button class="btn btn-primary btn-sm" style="background:var(--green); border-color:var(--green);" onclick="approveItem(\''+item.type+'\',\''+item.id+'\'); renderWhatsChanged();">✓ Approve</button>'+
+            '<button class="btn btn-ghost btn-sm" onclick="rejectItem(\''+item.type+'\',\''+item.id+'\')">↩ Reject</button>';
+        } else {
+          actions = '<button class="btn btn-ghost btn-sm" onclick="'+openHandler+'">Open →</button>'+
+            '<button class="btn btn-ghost btn-sm" onclick="removePending(\''+item.type+'\',\''+item.id+'\'); renderWhatsChanged();" title="Remove from publish queue">×</button>';
+        }
+        var checkboxDisabled = item.reviewState === 'needs_review' ? 'disabled' : '';
+        var checkboxChecked = item.reviewState === 'needs_review' ? '' : 'checked';
+        html += '<div style="background:'+bgColor+'; border:1px solid '+borderColor+'; border-radius:8px; padding:12px; margin-bottom:8px;">';
+        html += '<div style="display:flex; align-items:center; gap:12px;">';
+        html += '<input type="checkbox" '+checkboxChecked+' '+checkboxDisabled+' style="width:16px;height:16px;'+(checkboxDisabled?'opacity:0.4':'')+'" title="'+(checkboxDisabled?'Approve before publishing':'Include in publish batch')+'">';
+        html += thumb;
+        html += '<div style="flex:1; min-width:0;">';
+        html += '<div style="font-weight:700; font-size:13px; margin-bottom:3px;">'+item.name+(item.meta && item.meta !== item.id ? ' <span style="font-size:11px; color:var(--slate-400); font-weight:400;">· '+item.meta+'</span>' : '')+'</div>';
+        html += '<div style="font-size:11px; color:var(--slate-500); margin-bottom:6px;">'+item.detail+'</div>';
+        html += submitterHtml;
+        html += '</div>';
+        html += '<div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">';
+        html += flagBadge + stateBadge;
+        html += '</div>';
+        if (completeBar) html += completeBar;
+        html += '<div style="display:flex; gap:4px;">'+actions+'</div>';
+        html += '</div>';
+        html += '</div>';
+      });
+    });
+  }
+  html += '<div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:14px; margin-top:14px; font-size:12px; color:var(--slate-700);"><b style="color:var(--blue);">💡 How this works:</b> Every save lands here. <b>HQ saves</b> are auto-approved and ready to publish. <b>Studio Lead / Contributor saves</b> need HQ approval first. Only approved items get published when you click Publish.</div>';
   body.innerHTML = html;
+}
+
+function approveItem(type, id) {
+  var item = pendingChanges.find(function(p){ return p.type === type && p.id === id; });
+  if (!item) return;
+  item.reviewState = 'approved';
+  item.approvedBy = 'avi@';
+  item.approvedAt = 'just now';
+  updatePendingUI();
+  toast('✓ "'+item.name+'" approved · ready for next publish','success');
+}
+
+function rejectItem(type, id) {
+  window.currentRejectItem = { type: type, id: id };
+  openModal('rejectItem');
+}
+
+function confirmReject() {
+  var modal = document.getElementById('modal-rejectItem');
+  var reason = modal ? modal.querySelector('textarea').value.trim() : '';
+  var ref = window.currentRejectItem;
+  if (!ref) return;
+  var item = pendingChanges.find(function(p){ return p.type === ref.type && p.id === ref.id; });
+  if (!item) return;
+  removePending(ref.type, ref.id);
+  updatePendingUI();
+  renderWhatsChanged();
+  closeModal();
+  toast('↩ "'+item.name+'" rejected · '+item.actor+' notified'+(reason?' with feedback':'')+'','info');
 }
 
 function removePending(type, id) {
@@ -3084,21 +3222,26 @@ function renderPublishConfirm() {
 
 function publishToLive() {
   closeModal();
-  var n = pendingChanges.length;
-  if (n === 0) { toast('Nothing to publish','info'); return; }
-  toast('Publishing '+n+' change'+(n===1?'':'s')+' to rubyplay.com…','info');
+  // Only publish items that are approved (or auto-approved). Skip those still needing review.
+  var publishable = pendingChanges.filter(function(p){ return p.reviewState === 'approved' || p.reviewState === 'auto_approved'; });
+  var stillNeedReview = pendingChanges.filter(function(p){ return p.reviewState === 'needs_review'; });
+  var n = publishable.length;
+  if (n === 0) { toast('Nothing approved to publish · approve submissions first','info'); return; }
+  toast('Publishing '+n+' approved change'+(n===1?'':'s')+' to rubyplay.com…','info');
   setTimeout(function(){ toast('Step 1/3: Saving snapshots to production DB','info'); }, 400);
   setTimeout(function(){ toast('Step 2/3: Invalidating CDN cache','info'); }, 1200);
   setTimeout(function(){
-    toast('✓ All '+n+' changes published live on rubyplay.com','success');
-    // Flip every staging record to live
-    newsPosts.forEach(function(p){ if (p.status === 'staging') p.status = 'live'; });
-    Object.keys(gamesData).forEach(function(k){ if (gamesData[k]._status === 'staging') gamesData[k]._status = 'live'; });
-    Object.keys(studiosData).forEach(function(k){ if (studiosData[k]._status === 'staging') studiosData[k]._status = 'live'; });
-    pendingChanges = [];
+    toast('✓ '+n+' change'+(n===1?'':'s')+' published live on rubyplay.com'+(stillNeedReview.length?' · '+stillNeedReview.length+' still awaiting HQ review':''),'success');
+    // Flip every staging record (that was approved) to live
+    var publishedIds = {};
+    publishable.forEach(function(p){ publishedIds[p.type+':'+p.id] = true; });
+    newsPosts.forEach(function(p){ if (p.status === 'staging' && publishedIds['news:'+p.id]) p.status = 'live'; });
+    Object.keys(gamesData).forEach(function(k){ if (gamesData[k]._status === 'staging' && publishedIds['game:'+k]) gamesData[k]._status = 'live'; });
+    Object.keys(studiosData).forEach(function(k){ if (studiosData[k]._status === 'staging' && publishedIds['studio:'+k]) studiosData[k]._status = 'live'; });
+    // Remove only the published items from pendingChanges (leave the needs_review ones)
+    pendingChanges = pendingChanges.filter(function(p){ return p.reviewState === 'needs_review'; });
     updatePendingUI();
     renderWhatsChanged();
-    // Re-render the site preview if we're on it (so staging badges disappear)
     if (typeof renderSitePreview === 'function' && document.getElementById('view-site-preview').classList.contains('active')) {
       renderSitePreview();
     }
